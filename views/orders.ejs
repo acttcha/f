@@ -1,0 +1,368 @@
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
+<% var product = typeof products !== 'undefined' ? products : [] %>
+
+<div id="myModal" class="modal">
+  <div class="modal-content">
+      <span class="close" style="color: red;" id="closeModalBtn"><i class="fas fa-times-circle"></i></span>
+      <form id="dataForm">
+          <!-- 입력 필드 및 저장 버튼 -->
+          <div class="form-group">
+              <label for="id">상품번호:</label>
+              <input type="text" name="id" placeholder="상품번호">
+          </div>
+          <div class="form-group">
+              <label for="name">상품명:</label>
+              <input type="text" name="name" placeholder="상품명">
+          </div>
+          <div class="form-group">
+              <label for="price">가격:</label>
+              <input type="number" name="price" placeholder="가격">
+          </div>
+          <div class="form-group">
+              <label for="stock">재고수량:</label>
+              <input type="number" name="stock" placeholder="재고수량">
+          </div>
+          <div class="form-group">
+              <label for="location">진열위치:</label>
+              <input type="text" name="location" placeholder="진열위치">
+          </div>
+          <div class="form-group">
+              <label for="category">카테고리:</label>
+              <input type="text" name="category" placeholder="카테고리">
+          </div>
+
+          <!-- 나머지 입력 필드 추가 -->
+          <button type="button" id="saveDataBtn">입고</button>
+      </form>
+  </div>
+</div>
+
+<div id="editModal" class="modal">
+  <div class="modal-content">
+      <span class="close" style="color: red;" id="closeEditModalBtn"><i class="fas fa-times-circle"></i></span>
+      <form id="editForm">
+          <!-- 수정할 데이터 필드 -->
+          <div class="form-group">
+              <label for="editId">상품번호:</label>
+              <input type="text" name="id" id="editId" placeholder="상품번호" readonly style="background-color: #f0f0f0;">
+          </div>
+          <div class="form-group">
+              <label for="editName">상품명:</label>
+              <input type="text" name="name" id="editName" placeholder="상품명">
+          </div>
+          <div class="form-group">
+              <label for="editPrice">가격:</label>
+              <input type="number" name="price" id="editPrice" placeholder="가격">
+          </div>
+          <div class="form-group">
+              <label for="editStock">재고수량:</label>
+              <input type="number" name="stock" id="editStock" placeholder="재고수량">
+          </div>
+          <div class="form-group">
+              <label for="editLocation">진열위치:</label>
+              <input type="text" name="location" id="editLocation" placeholder="진열위치">
+          </div>
+          <div class="form-group">
+              <label for="editCategory">카테고리:</label>
+              <input type="text" name="category" id="editCategory" placeholder="카테고리">
+          </div>
+          <button type="button" id="updateDataBtn">수정</button>
+      </form>
+  </div>
+</div>
+
+<div id="deleteModal" class="modal">
+  <div class="modal-content">
+      <span class="close" style="color: red;" id="closeDeleteModalBtn"><i class="fas fa-times-circle"></i></span>
+      <form id="deleteForm">
+          <!-- 수정할 데이터 필드 -->
+          <p style="margin: 0; text-align: center;">정말 삭제하시겠습니까?</p>
+            <button type="button" id="deleteDataBtn">예</button>
+      </form>
+  </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <i class="fas fa-table me-1"></i>
+                주문 관리
+            </div>
+            <div>
+                <button id="openModalBtn" type="button" class="btn btn-success">주문 추가</button>
+            </div>
+        </div>
+        
+    </div>
+    <div class="card-body">
+        <table id="datatablesSimple">
+            <thead>
+                <tr>
+                    <th>주문번호</th>
+                    <th>상품번호</th>
+                    <th>주문일시</th>
+                    <th>수량</th>
+                    <th>배송지</th>
+                    <th>집품여부</th>
+                    <th>집품작업자ID</th>
+                    <th>리빈여부</th>
+                    <th>리빈작업자ID</th>
+                    <th>포장여부</th>
+                    <th>포장작업자ID</th>
+                    <th>포장방식</th>
+                    <th>변경</th>
+        
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th>주문번호</th>
+                    <th>상품번호</th>
+                    <th>주문일시</th>
+                    <th>수량</th>
+                    <th>배송지</th>
+                    <th>집품여부</th>
+                    <th>집품작업자ID</th>
+                    <th>리빈여부</th>
+                    <th>리빈작업자ID</th>
+                    <th>포장여부</th>
+                    <th>포장작업자ID</th>
+                    <th>포장방식</th>
+                    <th>변경</th>
+
+                </tr>
+            </tfoot>
+            <tbody>
+                <% orders.forEach(order => { %>
+                    <tr>
+                      <td><%= order.id %></td>
+                      <td><%= order.product_id %></td>
+                      <td><%= order.time %></td>
+                      <td><%= order.quantity %></td>
+                      <td><%= order.shipping_address %></td>
+                      <td><%= order.picking_flag %></td>
+                      <td><%= order.picking_worker_id %></td>
+                      <td><%= order.rebin_flag %></td>
+                      <td><%= order.rebin_worker_id %></td>
+                      <td><%= order.packing_flag %></td>
+                      <td><%= order.packing_worker_id %></td>
+                      <td><%= order.packing_method %></td>
+
+                      <td>
+                        <div class="dropdown">
+                          <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                            <i class="bx bx-dots-vertical-rounded"></i>
+                          </button>
+                          <div class="dropdown-menu">
+                            <button id="editModalBtn<%= product.id %>" class="dropdown-item" data-product-id="<%= product.id %>">
+                              <i class="bx bx-edit-alt me-1"></i> Edit
+                            </button>
+                            <button id="deleteModalBtn<%= product.id %>" class="dropdown-item" data-product-id="<%= product.id %>">
+                              <i class="bx bx-trash me-1"></i> Delete
+                            </button>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  <% }); %>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+// 모달 열기
+document.getElementById("openModalBtn").addEventListener("click", function() {
+  document.getElementById("myModal").style.display = "block";
+});
+
+// 모달 닫기
+document.getElementById("closeModalBtn").addEventListener("click", function() {
+  document.getElementById("myModal").style.display = "none";
+});
+
+// 모달 외부 클릭 시 닫기
+window.addEventListener("click", function(event) {
+  if (event.target == document.getElementById("myModal")) {
+    document.getElementById("myModal").style.display = "none";
+  }
+});
+
+// 데이터 추가 버튼 클릭 시
+document.getElementById("saveDataBtn").addEventListener("click", function() {
+  // 입력된 데이터 수집
+  const formData = new FormData(document.getElementById("dataForm"));
+
+  const data = {};
+    formData.forEach((value, key) => {
+    data[key] = value;
+    });
+
+  // 서버로 데이터 전송
+  fetch("/add-data", {
+    method: "POST",
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+    // 서버 응답 처리
+    if (data.success) {
+      // 데이터 추가가 성공하면 모달 닫기 또는 다른 작업 수행
+      document.getElementById("myModal").style.display = "none";
+      alert('입고 완료');
+      location.reload();
+    } else {
+      // 데이터 추가가 실패하면 오류 메시지를 사용자에게 표시
+      alert(data.message);
+    }
+  });
+});
+
+
+// 수정 모달 열면서 상품id를 getAttribute로 가져오고 해당하는 db데이터를 서버에 요청
+document.addEventListener("click", function(event) {
+  if (event.target.id.includes("editModalBtn")) {
+    document.getElementById("editModal").style.display = "block";
+    const productId = event.target.getAttribute("data-product-id");
+    console.log(productId)
+
+    fetch(`/update-data/${productId}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json', 
+    },
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('네트워크 응답이 실패했습니다.');
+      }
+      return response.json();
+    })
+    .then(productData => {
+      console.log('서버로부터 받은 데이터:', productData);
+      const idValue = productData.idvalue[0];
+      document.getElementById('editId').value = idValue.id;
+      document.getElementById('editName').value = idValue.name;
+      document.getElementById('editPrice').value = idValue.price;
+      document.getElementById('editStock').value = idValue.stock;
+      document.getElementById('editLocation').value = idValue.location;
+      document.getElementById('editCategory').value = idValue.category;
+    })
+    .catch(error => {
+      console.error('에러 발생:', error);
+    });
+  }
+});
+// document.getElementById("editModalBtn").addEventListener("click", function() {
+//   document.getElementById("editModal").style.display = "block";
+// });
+
+// 수정 모달 닫기
+document.getElementById("closeEditModalBtn").addEventListener("click", function() {
+    document.getElementById("editModal").style.display = "none";
+});
+
+// 수정 모달 외부 클릭 시 닫기
+window.addEventListener("click", function(event) {
+    if (event.target == document.getElementById("editModal")) {
+        document.getElementById("editModal").style.display = "none";
+    }
+});
+
+
+// 데이터 수정 버튼 클릭 시
+document.getElementById("updateDataBtn").addEventListener("click", function() {
+    // 입력된 데이터 수집
+    const formData = new FormData(document.getElementById("editForm"));
+
+    const data = {};
+    formData.forEach((value, key) => {
+        data[key] = value;
+    });
+
+    // 서버로 데이터 수정 요청 전송
+    fetch("/update-data/" + data.id, { 
+        method: "PUT", 
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        // 서버 응답 처리
+        if (data.success) {
+            document.getElementById("editModal").style.display = "none";
+            alert('수정 완료');
+            location.reload();
+        } else {
+            alert(data.message);
+        }
+    });
+});
+
+
+// 삭제 모달 열기
+document.addEventListener("click", function(event) {
+  if (event.target.id.includes("deleteModalBtn")) {
+    document.getElementById("deleteModal").style.display = "block";
+    const productId2 = event.target.getAttribute("data-product-id");
+    console.log(productId2)
+    window.productIdToDelete = productId2;
+  }
+});
+
+// 삭제 모달 닫기
+document.getElementById("closeDeleteModalBtn").addEventListener("click", function() {
+    document.getElementById("deleteModal").style.display = "none";
+});
+
+// 수정 모달 외부 클릭 시 닫기
+window.addEventListener("click", function(event) {
+    if (event.target == document.getElementById("deleteModal")) {
+        document.getElementById("deleteModal").style.display = "none";
+    }
+});
+
+
+// 데이터 삭제 버튼 클릭 시
+document.getElementById("deleteDataBtn").addEventListener("click", function() {
+
+    const productId = window.productIdToDelete;
+    console.log(productId);
+
+    fetch("/delete-data/" + productId, { 
+        method: "DELETE", 
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        // 서버 응답 처리
+        if (data.success) {
+            document.getElementById("deleteModal").style.display = "none";
+            alert('삭제 완료');
+            location.reload(); 
+
+        } else {
+            alert(data.message);
+        }
+    });
+});
+
+
+</script>
+
+<!-- Update 기능 구현 절차
+1. 컬럼 옆의 수정버튼을 누르면 그 컬럼의 <%= product.id %>값을 가져온다.
+2. 그 가져온 id값을 파라미터로 get요청으로 서버에 넘긴다.
+3. 서버에서 그 id값으로 된 컬럼의 값들을 가져와서 클라이언트에 보내준다.
+4. 그 컬럼의 값들을 editForm의 내용에 채워 넣는다.
+5. 수정 버튼을 눌러 put요청을 보내면 put api가 db에 update 해준다.
+-->
