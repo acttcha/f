@@ -1,0 +1,61 @@
+<div>
+    <div class="form-check form-switch">
+        <input type="checkbox" class="btn-check" id="includeTables" checked>
+        <label class="btn btn-outline-primary" for="includeTables">재고 관리</label>
+        
+        <input type="checkbox" class="btn-check" id="includeChart" checked>
+        <label class="btn btn-outline-primary" for="includeChart">통계 차트</label>
+    </div>
+    <div class="form-check form-switch">
+    </div>
+</div>
+
+<div id="chartModule" style="display: none;">
+    <%- include('chart.ejs') %>
+</div>
+<div id="tablesModule" style="display: none;">
+    <%- include('tables.ejs') %>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const includeTablesCheckbox = document.getElementById("includeTables");
+    const tablesModule = document.getElementById("tablesModule");
+
+    if (includeTablesCheckbox.checked) {
+        // 체크박스가 체크된 상태인 경우 모듈을 보이도록 설정
+        tablesModule.style.display = 'block';
+    }
+
+    includeTablesCheckbox.addEventListener("change", function() {
+        if (includeTablesCheckbox.checked) {
+            // 체크박스가 체크된 경우 모듈을 보이도록 설정
+            tablesModule.style.display = 'block';
+        } else {
+            // 체크박스가 체크 해제된 경우 모듈을 숨김
+            tablesModule.style.display = 'none';
+        }
+    });
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    const includeChartCheckbox = document.getElementById("includeChart");
+    const chartModule = document.getElementById("chartModule");
+
+    if (includeChartCheckbox.checked) {
+        // 체크박스가 체크된 상태인 경우 모듈을 보이도록 설정
+        chartModule.style.display = 'block';
+    }
+
+    includeChartCheckbox.addEventListener("change", function() {
+        if (includeChartCheckbox.checked) {
+            // 체크박스가 체크된 경우 모듈을 보이도록 설정
+            chartModule.style.display = 'block';
+        } else {
+            // 체크박스가 체크 해제된 경우 모듈을 숨김
+            chartModule.style.display = 'none';
+        }
+    });
+});
+
+</script>

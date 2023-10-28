@@ -9,7 +9,7 @@ const authRoutes = require('./routes/auth');
 const ordersRoutes = require('./routes/orders');
 const boxRoutes = require('./routes/box');
 const boxcontentRoutes = require('./routes/box_content');
-const workLineAssignRoutes = require('./routes/workline_assign');
+const workerControlRoutes = require('./routes/worker_control');
 
 
 require('dotenv').config() // 환경변수 라이브러리
@@ -110,7 +110,7 @@ app.use('/', authRoutes);
 app.use('/admin', ordersRoutes); 
 app.use('/admin', boxRoutes); 
 app.use('/admin', boxcontentRoutes); 
-app.use('/admin', workLineAssignRoutes); 
+app.use('/admin', workerControlRoutes); 
 
 
 

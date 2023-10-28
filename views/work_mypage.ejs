@@ -17,8 +17,14 @@
             <%- include('sidenav_work.ejs')%>
             <div id="layoutSidenav_content">
                 <main>
-                    <h1 style="margin: 5%;"> ID : <%= user.login_id %></h1>
-                    <h1 style="margin: 5%;" > 이름 : <%= user.name %></h1>
+                    <div class="container-fluid px-4">
+                        <h1 class="mt-4">마이페이지</h1>
+                        <hr>
+                        <h3> ID : <%= user.login_id %></h3>
+                        <h3> 이름 : <%= user.name %></h3>
+                        <h3> 작업 권한 : <%= user.work_access %></h3>
+                        <h3> 작업 구역 : <%= user.work_line %></h3>
+
 
                 </main>
                 <%- include('footer.ejs')%>
