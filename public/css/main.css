@@ -11645,3 +11645,9 @@ body {
 .form-group input {
   flex: 1; /* 입력 필드가 남은 공간을 채울 수 있도록 설정 */
 }
+
+.center-align {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

@@ -19,4 +19,33 @@ router.get('/box', (req, res) => {
     }
   });
 
+router.post('/add-box', (req, res) => {
+  const { box_id } = req.body;
+
+  const query = 'INSERT INTO box (box_id, availability, deadline_status) VALUES (?, 1, 0)';
+  db.query(query, [box_id], (err, results) => {
+    if (err) {
+      console.error('데이터 추가 오류: ' + err.message);
+      res.json({ success: false, message: '데이터 추가 실패' });
+    } else {
+      res.json({ success: true, message: '데이터 추가 성공' });
+    }
+  });
+});
+
+router.delete('/delete-box/:id', (req, res) => {
+  const boxId = req.params.id;
+
+  const query = 'DELETE FROM box WHERE box_id = ?';
+  console.log(boxId)
+  db.query(query, [boxId], (err, results) => {
+    if (err) {
+      console.error('데이터 삭제 오류: ' + err.message);
+      res.json({ success: false, message: '데이터 삭제 실패' });
+    } else {
+      res.json({ success: true, message: '데이터 삭제 성공' });
+    }
+  });
+});
+
 module.exports = router;
