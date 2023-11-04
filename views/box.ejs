@@ -92,18 +92,18 @@
 <script>
 // 모달 열기
 document.getElementById("boxAddBtn").addEventListener("click", function() {
-  document.getElementById("boxAddModal").style.display = "block";
+  openModal("boxAddModal");
 });
 
 // 모달 닫기
 document.getElementById("closeModalBtn").addEventListener("click", function() {
-  document.getElementById("boxAddModal").style.display = "none";
+  closeModal("boxAddModal");
 });
 
 // 모달 외부 클릭 시 닫기
 window.addEventListener("click", function(event) {
   if (event.target == document.getElementById("boxAddModal")) {
-    document.getElementById("boxAddModal").style.display = "none";
+    closeModal("boxAddModal");
   }
 });
 
@@ -145,7 +145,7 @@ document.getElementById("boxDataAddBtn").addEventListener("click", function() {
 // 삭제 모달 열기
 document.addEventListener("click", function(event) {
   if (event.target.id.includes("boxDeleteModalBtn")) {
-    document.getElementById("boxDeleteModal").style.display = "block";
+    openModal("boxDeleteModal");
     const Id = event.target.getAttribute("data-id");
     console.log(Id)
     window.moveId = Id;
@@ -154,13 +154,13 @@ document.addEventListener("click", function(event) {
 
 // 삭제 모달 닫기
 document.getElementById("closeDeleteModalBtn").addEventListener("click", function() {
-    document.getElementById("boxDeleteModal").style.display = "none";
+  closeModal("boxDeleteModal");
 });
 
 // 수정 모달 외부 클릭 시 닫기
 window.addEventListener("click", function(event) {
     if (event.target == document.getElementById("boxDeleteModal")) {
-        document.getElementById("boxDeleteModal").style.display = "none";
+      closeModal("boxDeleteModal");
     }
 });
 
@@ -191,5 +191,12 @@ document.getElementById("deleteDataBtn").addEventListener("click", function() {
     });
 });
 
+function openModal(modalId) {
+  document.getElementById(modalId).style.display = "block";
+}
+
+function closeModal(modalId) {
+  document.getElementById(modalId).style.display = "none";
+}
 
 </script>

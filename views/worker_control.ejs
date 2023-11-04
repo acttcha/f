@@ -110,7 +110,7 @@
 // 권한 부여 모달 열기
 document.addEventListener("click", function(event) {
   if (event.target.id.includes("controlModalBtn")) {
-    document.getElementById("accessModal").style.display = "block";
+    openModal("accessModal")
     const Id = event.target.getAttribute("data-id");
     console.log(Id)
     window.moveId = Id;
@@ -120,13 +120,13 @@ document.addEventListener("click", function(event) {
 
 // 권한 부여 모달 닫기
 document.getElementById("closeAccessModalBtn").addEventListener("click", function() {
-    document.getElementById("accessModal").style.display = "none";
+  closeModal("accessModal")
 });
 
 // 권한 부여 모달 외부 클릭 시 닫기
 window.addEventListener("click", function(event) {
     if (event.target == document.getElementById("accessModal")) {
-        document.getElementById("accessModal").style.display = "none";
+      closeModal("accessModal")
     }
 });
 
@@ -158,10 +158,10 @@ document.getElementById("accessBtn").addEventListener("click", function() {
 });
 
 
-// 작업 라인 변경 모달 열기
+// 작업 구역 변경 모달 열기
 document.addEventListener("click", function(event) {
   if (event.target.id.includes("lineModalBtn")) {
-    document.getElementById("lineModal").style.display = "block";
+    openModal("lineModal")
     const Id = event.target.getAttribute("data-id");
     console.log(Id)
     window.moveId = Id;
@@ -171,13 +171,13 @@ document.addEventListener("click", function(event) {
 
 // 작업 라인 변경 모달 닫기
 document.getElementById("closeLineModalBtn").addEventListener("click", function() {
-    document.getElementById("lineModal").style.display = "none";
+  closeModal("lineModal")  
 });
 
 // 작업 라인 변경 모달 외부 클릭 시 닫기
 window.addEventListener("click", function(event) {
     if (event.target == document.getElementById("lineModal")) {
-        document.getElementById("lineModal").style.display = "none";
+      closeModal("lineModal")
     }
 });
 
@@ -211,7 +211,7 @@ document.getElementById("lineBtn").addEventListener("click", function() {
 // 삭제 모달 열기
 document.addEventListener("click", function(event) {
   if (event.target.id.includes("deleteWorkerBtn")) {
-    document.getElementById("deleteWorkerModal").style.display = "block";
+    openModal("deleteWorkerModal")
     const Id3 = event.target.getAttribute("data-id");
     console.log(Id3)
     window.moveToDelete = Id3;
@@ -220,13 +220,13 @@ document.addEventListener("click", function(event) {
 
 // 삭제 모달 닫기
 document.getElementById("closeDeleteModalBtn").addEventListener("click", function() {
-    document.getElementById("deleteWorkerModal").style.display = "none";
+  closeModal("deleteWorkerModal")
 });
 
 // 수정 모달 외부 클릭 시 닫기
 window.addEventListener("click", function(event) {
     if (event.target == document.getElementById("deleteWorkerModal")) {
-        document.getElementById("deleteWorkerModal").style.display = "none";
+      closeModal("deleteWorkerModal")  
     }
 });
 
@@ -256,6 +256,14 @@ document.getElementById("deleteWorkerDataBtn").addEventListener("click", functio
         }
     });
 });
+
+function openModal(modalId) {
+  document.getElementById(modalId).style.display = "block";
+}
+
+function closeModal(modalId) {
+  document.getElementById(modalId).style.display = "none";
+}
 
 
 </script>

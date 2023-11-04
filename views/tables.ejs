@@ -155,18 +155,20 @@
 <script>
 // 모달 열기
 document.getElementById("openModalBtn").addEventListener("click", function() {
-  document.getElementById("myModal").style.display = "block";
+  // document.getElementById("myModal").style.display = "block";
+  openModal("myModal");
 });
 
 // 모달 닫기
 document.getElementById("closeModalBtn").addEventListener("click", function() {
-  document.getElementById("myModal").style.display = "none";
+  // document.getElementById("myModal").style.display = "none";
+  closeModal("myModal");
 });
 
 // 모달 외부 클릭 시 닫기
 window.addEventListener("click", function(event) {
   if (event.target == document.getElementById("myModal")) {
-    document.getElementById("myModal").style.display = "none";
+    closeModal("myModal");
   }
 });
 
@@ -207,7 +209,7 @@ document.getElementById("saveDataBtn").addEventListener("click", function() {
 // 수정 모달 열면서 상품id를 getAttribute로 가져오고 해당하는 db데이터를 서버에 요청
 document.addEventListener("click", function(event) {
   if (event.target.id.includes("editModalBtn")) {
-    document.getElementById("editModal").style.display = "block";
+    openModal("editModal");
     const productId = event.target.getAttribute("data-product-id");
     console.log(productId)
 
@@ -238,19 +240,16 @@ document.addEventListener("click", function(event) {
     });
   }
 });
-// document.getElementById("editModalBtn").addEventListener("click", function() {
-//   document.getElementById("editModal").style.display = "block";
-// });
 
 // 수정 모달 닫기
 document.getElementById("closeEditModalBtn").addEventListener("click", function() {
-    document.getElementById("editModal").style.display = "none";
+  closeModal("editModal");
 });
 
 // 수정 모달 외부 클릭 시 닫기
 window.addEventListener("click", function(event) {
     if (event.target == document.getElementById("editModal")) {
-        document.getElementById("editModal").style.display = "none";
+      closeModal("editModal");
     }
 });
 
@@ -290,7 +289,7 @@ document.getElementById("updateDataBtn").addEventListener("click", function() {
 // 삭제 모달 열기
 document.addEventListener("click", function(event) {
   if (event.target.id.includes("deleteModalBtn")) {
-    document.getElementById("deleteModal").style.display = "block";
+    openModal("deleteModal");
     const productId2 = event.target.getAttribute("data-product-id");
     console.log(productId2)
     window.productIdToDelete = productId2;
@@ -299,13 +298,13 @@ document.addEventListener("click", function(event) {
 
 // 삭제 모달 닫기
 document.getElementById("closeDeleteModalBtn").addEventListener("click", function() {
-    document.getElementById("deleteModal").style.display = "none";
+  closeModal("deleteModal")
 });
 
 // 수정 모달 외부 클릭 시 닫기
 window.addEventListener("click", function(event) {
     if (event.target == document.getElementById("deleteModal")) {
-        document.getElementById("deleteModal").style.display = "none";
+      closeModal("deleteModal")
     }
 });
 
@@ -316,7 +315,7 @@ document.getElementById("deleteDataBtn").addEventListener("click", function() {
     const productId = window.productIdToDelete;
     console.log(productId);
 
-    fetch("/delete-data/" + productId, { 
+    fetch("/delete-data/" + productId, {
         method: "DELETE", 
         headers: {
             'Content-Type': 'application/json'
@@ -326,7 +325,7 @@ document.getElementById("deleteDataBtn").addEventListener("click", function() {
     .then(data => {
         // 서버 응답 처리
         if (data.success) {
-            document.getElementById("deleteModal").style.display = "none";
+            closeModal("deleteModal");
             alert('삭제 완료');
             location.reload(); 
 
@@ -336,6 +335,14 @@ document.getElementById("deleteDataBtn").addEventListener("click", function() {
     });
 });
 
+
+function openModal(modalId) {
+  document.getElementById(modalId).style.display = "block";
+}
+
+function closeModal(modalId) {
+  document.getElementById(modalId).style.display = "none";
+}
 
 </script>
 

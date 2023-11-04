@@ -229,6 +229,10 @@ app.get('/picking1', (req, res) => {
   res.render('picking1.ejs')
 })
 
+app.get('/picking2', (req, res) => {
+  res.render('picking2.ejs')
+})
+
 app.get('/packing1', (req, res) => {
   res.render('packing1.ejs')
 })
