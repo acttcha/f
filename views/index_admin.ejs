@@ -23,65 +23,30 @@
                             <li class="breadcrumb-item active">Dashboard</li>
                         </ol>
                         <div class="row">
-                            <div class="col-xl-3 col-md-6">
-                                <div class="card bg-primary text-white mb-4 shadow-pop-br">
-                                    <div class="card-body">재고 관리</div>
-                                    <div class="vibrate-1 card-footer d-flex align-items-center justify-content-between">
-                                        <a class="small text-white stretched-link" href="/admin/product">View</a>
-                                        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                            <%
+                            const cards = [
+                                { bgColor: "bg-primary", title: "재고 관리", link: "/admin/product" },
+                                { bgColor: "bg-box2", title: "주문 관리", link: "/admin/orders" },
+                                { bgColor: "bg-success", title: "토트 관리", link: "/admin/box" },
+                                { bgColor: "bg-danger", title: "파손상품 관리", link: "#" },
+                                { bgColor: "bg-box4", title: "작업자 관리", link: "/admin/worker_control" },
+                                { bgColor: "bg-box5", title: "통계 차트", link: "/admin/chart" }
+                            ];
+
+                            cards.forEach(card => { %>
+                                <div class="col-xl-3 col-md-6">
+                                    <div class="card <%= card.bgColor %> text-white mb-4 shadow-pop-br">
+                                        <div class="card-body"><%= card.title %></div>
+                                        <div class="card-footer d-flex align-items-center justify-content-between">
+                                            <a class="small text-white stretched-link" href="<%= card.link %>">View</a>
+                                            <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-xl-3 col-md-6">
-                                <div class="card bg-box2 text-white mb-4 shadow-pop-br">
-                                    <div class="card-body">주문 관리</div>
-                                    <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <a class="small text-white stretched-link" href="/admin/orders">View</a>
-                                        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-3 col-md-6">
-                                <div class="card bg-success text-white mb-4 shadow-pop-br"> 
-                                    <div class="card-body">토트 관리</div>
-                                    <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <a class="small text-white stretched-link" href="/admin/box">View</a>
-                                        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-3 col-md-6">
-                                <div class="card bg-danger text-white mb-4 shadow-pop-br">
-                                    <div class="card-body">파손상품 관리</div>
-                                    <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <a class="small text-white stretched-link" href="#">View</a>
-                                        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-3 col-md-6">
-                                <div class="card bg-box4 text-white mb-4 shadow-pop-br">
-                                    <div class="card-body">작업자 관리</div> 
-                                    <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <a class="small text-white stretched-link" href="/admin/worker_control">View</a>
-                                        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-3 col-md-6">
-                                <div class="card bg-box5 text-white mb-4 shadow-pop-br">
-                                    <div class="card-body">통계 차트</div>
-                                    <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <a class="small text-white stretched-link" href="/admin/chart">View</a>
-                                        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                                    </div>
-                                </div>
-                            </div>
+                            <% }); %>
                         </div>
                         <%- include('chart.ejs')%>
                         <%- include('tables.ejs')%>
-                        <!-- <div><%= JSON.stringify(products) %></div> -->
-                        
                         
                     </div>
                 </main>
