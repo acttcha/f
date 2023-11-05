@@ -62,7 +62,7 @@
                             <i class="bx bx-dots-vertical-rounded"></i>
                           </button>
                           <div class="dropdown-menu">
-                            <button id="outModalBtn<%= box_content.box_content_id %>" class="dropdown-item" data-id="<%= box_content.box_content_id %>">
+                            <button id="outModalBtn<%= box_content.box_content_id %>" class="dropdown-item" data-id="<%= box_content.box_content_id %>" data-orderid="<%= box_content.order_id %>">
                               <i class="bx bx-edit-alt me-1"></i> 토트에서 해당 상품 꺼내기
                             </button>
                           </div>
@@ -88,8 +88,11 @@ document.addEventListener("click", function(event) {
   if (event.target.id.includes("outModalBtn")) {
     openModal("outModal")
     const Id = event.target.getAttribute("data-id");
+    const orderId = event.target.getAttribute("data-orderId");
     console.log(Id)
     window.moveId = Id;
+    window.moveOrderId = orderId;
+
   }
 });
 
@@ -110,13 +113,17 @@ window.addEventListener("click", function(event) {
 document.getElementById("outDataBtn").addEventListener("click", function() {
 
     const Id = window.moveId;
+    const orderId = window.moveOrderId;
     console.log(Id);
+    console.log(orderId);
 
     fetch("/admin/deleteBoxContent/" + Id, { 
         method: "DELETE", 
         headers: {
             'Content-Type': 'application/json'
         },
+        body: JSON.stringify({ order_id: orderId })
+        ,
     })
     .then(response => response.json())
     .then(data => {

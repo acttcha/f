@@ -10,6 +10,8 @@ const ordersRoutes = require('./routes/orders');
 const boxRoutes = require('./routes/box');
 const boxcontentRoutes = require('./routes/box_content');
 const workerControlRoutes = require('./routes/worker_control');
+const pickingRoutes = require('./routes/picking');
+
 
 
 require('dotenv').config() // 환경변수 라이브러리
@@ -111,6 +113,8 @@ app.use('/admin', ordersRoutes);
 app.use('/admin', boxRoutes); 
 app.use('/admin', boxcontentRoutes); 
 app.use('/admin', workerControlRoutes); 
+app.use('/work', pickingRoutes); 
+
 
 
 
@@ -222,11 +226,6 @@ app.get('/work/mypage', (req, res) => {
   else {
     res.redirect('/login');
   }
-})
-
-
-app.get('/picking1', (req, res) => {
-  res.render('picking1.ejs')
 })
 
 app.get('/picking2', (req, res) => {
