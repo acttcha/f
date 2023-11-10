@@ -20,7 +20,7 @@
                     <div class="container-fluid px-4">
                         <h1 class="mt-4">Dashboard</h1>
                         <ol class="breadcrumb mb-4">
-                            <li class="breadcrumb-item active">Dashboard</li>
+                            <li class="breadcrumb-item active">Control</li>
                         </ol>
                         <div class="row">
                             <% 
@@ -42,6 +42,31 @@
                                 </div>
                             </div>
                         <% }); %>
+                        
+                        <ol class="breadcrumb mb-4">
+                            <li class="breadcrumb-item active">Funtion</li>
+                        </ol>
+                        <div class="row">
+                            <% 
+                        const cards2 = [
+                            { title: "토트 조회", bgColor: "bg-info", link: "/work/viewbox" }
+                        ];
+
+                        cards2.forEach(card2 => { %>
+                            <div class="col-xl-3 col-md-6">
+                                <div class="card <%= card2.bgColor %> text-white mb-4 shadow-pop-br">
+                                    <div class="card-body"><%= card2.title %></div>
+                                    <div class="card-footer d-flex align-items-center justify-content-between">
+                                        <a class="small text-white stretched-link" href="<%= card2.link %>">시작</a>
+                                        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }); %>
+                        </div>
+                        
+
+                        </div>
                     </div>
                 </main>
                 <%- include('footer.ejs')%>
