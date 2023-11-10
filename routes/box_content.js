@@ -28,21 +28,6 @@ router.get('/box/:id', (req, res) => {
   }
 });
 
-// router.delete('/deleteBoxContent/:id', (req, res) => {
-//   const boxContentId = req.params.id;
-
-//   const query = 'DELETE FROM box_content WHERE id = ?';
-//   console.log(boxContentId)
-//   db.query(query, [boxContentId], (err, results) => {
-//     if (err) {
-//       console.error('데이터 삭제 오류: ' + err.message);
-//       res.json({ success: false, message: '데이터 삭제 실패' });
-//     } else {
-//       res.json({ success: true, message: '데이터 삭제 성공' });
-//     }
-//   });
-// });
-
 // 토트 내용물을 삭제하면 집품 여부도 0으로 변경
 router.delete('/deleteBoxContent/:id', (req, res) => {
   const boxContentId = req.params.id;

@@ -12,6 +12,8 @@ const boxcontentRoutes = require('./routes/box_content');
 const workerControlRoutes = require('./routes/worker_control');
 const pickingRoutes = require('./routes/picking');
 const viewBoxRoutes = require('./routes/viewbox');
+const packingRoutes = require('./routes/packing');
+
 
 
 
@@ -116,6 +118,8 @@ app.use('/admin', boxcontentRoutes);
 app.use('/admin', workerControlRoutes); 
 app.use('/work', pickingRoutes); 
 app.use('/work', viewBoxRoutes); 
+app.use('/work', packingRoutes); 
+
 
 
 
