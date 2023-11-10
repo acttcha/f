@@ -88,28 +88,6 @@ router.get('/picking2', (req, res) => {
     }
 })
 
-// router.post('/boxinsert', (req, res) => {
-//     const boxId = req.body.boxId; // boxId를 요청 본문에서 가져옴
-//     const orders = JSON.parse(req.body.orders);
-//     const orderId = orders[0].orderid.toString();
-//     console.log(orderId)
-  
-//     const query = `INSERT INTO box_content (box_id, order_id, rebin_rack_id) VALUES (?, ?, NULL)`;
-//     const query2 = `UPDATE orders SET picking_flag = 1 WHERE orderid = ?`;
-  
-//     db.query(query, [boxId, orderId], (error, results) => {
-//       if (error) {
-//         // 오류 처리
-//         console.error(error);
-//         res.status(500).send('데이터베이스 오류');
-//       } else {
-//         db.query()
-//         res.redirect('/work/picking2');
-//       }
-//     });
-// });
-
-
 router.post('/boxinsert', (req, res) => {
     const boxId = req.body.boxId; // boxId를 요청 본문에서 가져옴
     const orders = JSON.parse(req.body.orders);
