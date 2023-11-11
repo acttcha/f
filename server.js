@@ -13,6 +13,8 @@ const workerControlRoutes = require('./routes/worker_control');
 const pickingRoutes = require('./routes/picking');
 const viewBoxRoutes = require('./routes/viewbox');
 const packingRoutes = require('./routes/packing');
+const trackingNumberRoutes = require('./routes/tracking_number');
+
 
 
 
@@ -116,12 +118,10 @@ app.use('/admin', ordersRoutes);
 app.use('/admin', boxRoutes); 
 app.use('/admin', boxcontentRoutes); 
 app.use('/admin', workerControlRoutes); 
+app.use('/admin', trackingNumberRoutes);
 app.use('/work', pickingRoutes); 
 app.use('/work', viewBoxRoutes); 
 app.use('/work', packingRoutes); 
-
-
-
 
 
 
