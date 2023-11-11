@@ -18,25 +18,34 @@
             <div id="layoutSidenav_content">
                 <main>
                     <div class="container-fluid px-4">
-                        <h1 class="mt-4">포장 작업(단일)</h1>
+                        <h1 class="mt-4">포장 작업</h1>
                         <ol class="breadcrumb mb-4">
-                            <li class="breadcrumb-item active">Single Packing</li>
+                            <li class="breadcrumb-item active">Picking</li>
                         </ol>
                         
                         <div class="container">
                             <div class="sidebar">
-                                <h1>1. 집품 상자 바코드를 스캔 또는 입력하세요.</h1>
+                                <h1 id="title">3. 해당 상품을 박스에 포장하고 송장을 부착해주세요.</h1>
                                 
                             </div>
                             <div class="main-content">
-                                <div class="mb-3">
-                                    <div class="custom-center">
-                                        <input type="email" class="form-control custom-input" id="boxnum" placeholder="집품 상자 번호">
-                                    </div>
-                                </div>
+                                <img src="../assets/img/양파.jpg" alt="상품 이미지" class="product-image" width="200">
+                                <h3>상품번호 : <%= orders[0].productid.toString() %></h3>
+                                <h3>상품명 : <%= orders[0].name.toString() %></h3>
+                                <h3 style="color: red;">포장 수량 : <%= orders[0].quantity.toString() %></h3>
+                                <h3>배송지 : <%= orders[0].shipping_address%></h3>
                             </div>
                             <div class="footer">
-                                <button id="startbtn" class="btn btn-success">포장 시작하기</button>
+                                <p>현재 토트 번호 : <%= boxId %></p>
+                                <p>송장 번호 : <%= trackingNumber %></p>
+                                <div style="display: flex; justify-content: center;">
+                                <form action="/work/finish-packing" method="post">
+                                    <input type="hidden" name="boxId" value="<%= boxId %>">
+                                    <input type="hidden" name="orderId" value="<%= orders[0].orderid %>">
+                                    <button type="submit" id="packingfinishbtn" class="btn btn-success">포장 완료</button>
+                                </form>
+                                
+                                </div>
                             </div>
                         </div>
                         
@@ -48,28 +57,8 @@
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
         <script src="../js/scripts.js"></script>
-
         <script>
-
-            document.getElementById("startbtn").addEventListener("click", function() {
-                const boxNumber = document.getElementById("boxnum").value;
-                console.log(boxNumber)
-
-            fetch("/work/boxContentCheck/" + boxNumber, {
-                method: "GET", 
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    window.location.href = "/work/singlePacking2?boxId=" + boxNumber;
-                } else {
-                    alert(data.message);
-                }
-            });
-            });
+            console.log("<%= orders[0].orderid %>")
         </script>
         
     </body>

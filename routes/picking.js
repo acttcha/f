@@ -69,7 +69,7 @@ router.get('/picking2', (req, res) => {
                         console.log(results);
                         res.render('picking2.ejs', { user: req.user, boxId: boxId, orders: results });
                     } else {
-                        res.send('주문 데이터가 없어서 토트를 마감하였습니다.');
+                        res.send('주문 데이터가 없습니다.');
                     }
                 }
             });
@@ -137,20 +137,6 @@ router.post('/boxinsert', (req, res) => {
     });
 });
 
-
-// router.post('/boxfinish', (req, res) => {
-//     const boxId = req.body.boxId; // boxId를 요청 본문에서 가져옴
-//     const query = 'UPDATE box SET deadline_status = 1 WHERE box_id = ?';
-//           db.query(query, [boxId], (err, results) => {
-//               if (err) {
-//                   console.error('오류 ' + err.message);
-//                   res.json({ success: false, message: '마감여부 업데이트 실패' });
-//               } else {
-//                     res.redirect('/work/picking1')
-//                     // res.json({ success: true, message: '마감여부 1로 변경 성공' });
-//               }
-//           });
-// });
 
 router.post('/boxfinish', (req, res) => {
     const boxId = req.body.boxId; // boxId를 요청 본문에서 가져옴
