@@ -24,6 +24,7 @@ router.get('/picking1', (req, res) => {
     }
 })
 
+
 router.get('/boxcheck/:id', (req, res) => {
     const { id } = req.params;
   

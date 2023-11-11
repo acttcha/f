@@ -73,8 +73,14 @@
                             <i class="bx bx-dots-vertical-rounded"></i>
                           </button>
                           <div class="dropdown-menu">
-                            <button id="editModalBtn<%= box.box_id %>" class="dropdown-item" data-id="<%= box.box_id %>">
+                            <button id="availBtn<%= box.box_id %>" class="dropdown-item" data-id="<%= box.box_id %>">
                               <i class="bx bx-edit-alt me-1"></i> 가용화
+                            </button>
+                            <button id="unavailBtn<%= box.box_id %>" class="dropdown-item" data-id="<%= box.box_id %>">
+                              <i class="bx bx-edit-alt me-1"></i> 불가용화
+                            </button>
+                            <button id="deadlineBtn<%= box.box_id %>" class="dropdown-item" data-id="<%= box.box_id %>">
+                              <i class="bx bx-edit-alt me-1"></i> 마감취소
                             </button>
                             <button id="boxDeleteModalBtn<%= box.box_id %>" class="dropdown-item" data-id="<%= box.box_id %>">
                               <i class="bx bx-trash me-1"></i> 삭제
@@ -189,6 +195,72 @@ document.getElementById("deleteDataBtn").addEventListener("click", function() {
             alert(data.message);
         }
     });
+});
+
+// 가용화 버튼 클릭 시
+document.addEventListener("click", function(event) {
+  if (event.target.id.includes("availBtn")) {
+    const Id = event.target.getAttribute("data-id");
+    fetch("/admin/avail-box/" + Id, { 
+    method: "PUT", 
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    })
+    .then(response => response.json())
+    .then(data => {
+        // 서버 응답 처리
+        if (data.success) {
+            location.reload(); 
+        } else {
+            alert(data.message);
+        }
+      });
+  }
+});
+
+// 불가용화 버튼 클릭 시
+document.addEventListener("click", function(event) {
+  if (event.target.id.includes("unavailBtn")) {
+    const Id = event.target.getAttribute("data-id");
+    fetch("/admin/unavail-box/" + Id, { 
+    method: "PUT", 
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    })
+    .then(response => response.json())
+    .then(data => {
+        // 서버 응답 처리
+        if (data.success) {
+            location.reload(); 
+        } else {
+            alert(data.message);
+        }
+      });
+  }
+});
+
+// 마감취소 버튼 클릭 시
+document.addEventListener("click", function(event) {
+  if (event.target.id.includes("deadlineBtn")) {
+    const Id = event.target.getAttribute("data-id");
+    fetch("/admin/cancel-deadline/" + Id, { 
+    method: "PUT", 
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    })
+    .then(response => response.json())
+    .then(data => {
+        // 서버 응답 처리
+        if (data.success) {
+            location.reload(); 
+        } else {
+            alert(data.message);
+        }
+      });
+  }
 });
 
 function openModal(modalId) {

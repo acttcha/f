@@ -48,4 +48,49 @@ router.delete('/delete-box/:id', (req, res) => {
   });
 });
 
+router.put('/avail-box/:id', (req, res) => {
+  const boxId = req.params.id;
+
+  const query = 'UPDATE box SET availability = 1 WHERE box_id = ?';
+  console.log(boxId)
+  db.query(query, [boxId], (err, results) => {
+    if (err) {
+      console.error('데이터 수정 오류: ' + err.message);
+      res.json({ success: false, message: '데이터 수정 실패' });
+    } else {
+      res.json({ success: true, message: '데이터 수정 성공' });
+    }
+  });
+});
+
+router.put('/unavail-box/:id', (req, res) => {
+  const boxId = req.params.id;
+
+  const query = 'UPDATE box SET availability = 0 WHERE box_id = ?';
+  console.log(boxId)
+  db.query(query, [boxId], (err, results) => {
+    if (err) {
+      console.error('데이터 수정 오류: ' + err.message);
+      res.json({ success: false, message: '데이터 수정 실패' });
+    } else {
+      res.json({ success: true, message: '데이터 수정 성공' });
+    }
+  });
+});
+
+router.put('/cancel-deadline/:id', (req, res) => {
+  const boxId = req.params.id;
+
+  const query = 'UPDATE box SET deadline_status = 0 WHERE box_id = ?';
+  console.log(boxId)
+  db.query(query, [boxId], (err, results) => {
+    if (err) {
+      console.error('데이터 수정 오류: ' + err.message);
+      res.json({ success: false, message: '데이터 수정 실패' });
+    } else {
+      res.json({ success: true, message: '데이터 수정 성공' });
+    }
+  });
+});
+
 module.exports = router;
