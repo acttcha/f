@@ -2,6 +2,10 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 
+const fs = require('fs');
+const pdfDocument = require('pdfkit');
+
+
 
 router.get('/packing1', (req, res) => {
     if (req.user) {
@@ -174,6 +178,7 @@ router.get('/singlePacking3', (req, res) => {
     if (req.user) {
       if(req.user.is_admin === 0){
         if(req.user.work_access =='포장' || req.user.work_access === 'ALL'){
+
             const boxId = req.query.boxId;
             const trackingNumber = req.query.trackingNumber;
             console.log(boxId)
@@ -185,6 +190,7 @@ router.get('/singlePacking3', (req, res) => {
                 } else {
                     if (results.length > 0) {
                         console.log(results);
+                        
                         res.render('work_singlePacking3.ejs', { user: req.user, boxId: boxId, orders: results, trackingNumber: trackingNumber});
                     } else {
                         res.send('포장할 상품이 없습니다.');
@@ -227,5 +233,37 @@ router.post('/finish-packing', (req, res) => {
       }
     });
 });
+
+
+
+router.post('/generatePDF', (req, res) => {
+  console.log(req.body)
+  const doc = new pdfDocument();
+  doc.font("./public/assets/font/malgun.ttf");
+
+  res.setHeader('Content-Type', 'application/pdf');
+  res.setHeader('Content-Disposition', 'inline; filename=invoice.pdf');
+
+  doc.pipe(res);
+
+  doc.fontSize(20).text('운송장', { align: 'center' });
+  doc.moveDown();
+  doc.fontSize(12).text(`운송장 번호 : ${req.body.trackingNumber}`);
+  doc.text(`상품명 : ${req.body.productName}`);
+  doc.fontSize(12).text(`주문번호 : ${req.body.orderId}`);
+
+  doc.fontSize(12).text(`FROM: 물류센터`);
+  doc.fontSize(12).text(`TO: ${req.body.address}`);
+
+  doc.moveDown();
+  doc.text('집하 날짜: ' + new Date().toLocaleDateString());
+  doc.moveDown();
+
+  // generatePDF에서 다시 응답을 보냅니다.
+  doc.end(() => {
+      res.end();
+  });
+});
+
 
 module.exports = router;

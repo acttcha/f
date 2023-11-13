@@ -60,6 +60,37 @@
         <script>
             console.log("<%= orders[0].orderid %>")
         </script>
+        <script>
+            const boxId = '<%= boxId %>';
+            const trackingNumber = '<%= trackingNumber %>';
+            const orderId = '<%= orders[0].orderid %>';
+            const productName = '<%= orders[0].name %>';
+            const address = '<%= orders[0].shipping_address %>';
+            
+
+            fetch('/work/generatePDF', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ boxId, trackingNumber, orderId, productName, address }),
+            })
+            .then(response => response.blob())
+            .then(blob => {
+                const url = URL.createObjectURL(blob);
+
+                // PDF를 다운로드하거나 자동으로 인쇄
+                const iframe = document.createElement('iframe');
+                iframe.style.display = 'none';
+                iframe.src = url;
+                document.body.appendChild(iframe);
+
+                // 자동으로 인쇄
+                iframe.contentWindow.onload = () => {
+                iframe.contentWindow.print();
+                };
+            });
+        </script>
         
     </body>
 </html>
