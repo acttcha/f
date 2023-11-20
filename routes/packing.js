@@ -259,7 +259,6 @@ router.post('/generatePDF', (req, res) => {
   doc.text('집하 날짜: ' + new Date().toLocaleDateString());
   doc.moveDown();
 
-  // generatePDF에서 다시 응답을 보냅니다.
   doc.end(() => {
       res.end();
   });

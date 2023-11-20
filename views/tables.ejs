@@ -5,7 +5,7 @@
 <div id="myModal" class="modal">
   <div class="modal-content">
       <span class="close" style="color: red;" id="closeModalBtn"><i class="fas fa-times-circle"></i></span>
-      <form id="dataForm">
+      <form id="dataForm" enctype="multipart/form-data">
           <!-- 입력 필드 및 저장 버튼 -->
           <div class="form-group">
               <label for="id">상품번호:</label>
@@ -31,6 +31,11 @@
               <label for="category">카테고리:</label>
               <input type="text" name="category" placeholder="카테고리">
           </div>
+          <div class="form-group">
+            <label for="category">상품사진:</label>
+            <input type="file" name="img" accept="image/*" placeholder="상품사진">
+        </div>
+          
 
           <!-- 나머지 입력 필드 추가 -->
           <button type="button" id="saveDataBtn">입고</button>
@@ -176,19 +181,12 @@ window.addEventListener("click", function(event) {
 document.getElementById("saveDataBtn").addEventListener("click", function() {
   // 입력된 데이터 수집
   const formData = new FormData(document.getElementById("dataForm"));
-
-  const data = {};
-    formData.forEach((value, key) => {
-    data[key] = value;
-    });
+  console.log(formData.get('img'));
 
   // 서버로 데이터 전송
   fetch("/add-data", {
     method: "POST",
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(data)
+    body: formData
     })
     .then(response => response.json())
     .then(data => {

@@ -2,6 +2,29 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 
+const { S3Client } = require('@aws-sdk/client-s3')
+const multer = require('multer')
+const multerS3 = require('multer-s3')
+const s3 = new S3Client({
+  region : 'ap-northeast-2',
+  credentials : {
+      accessKeyId : process.env.S3_KEY,
+      secretAccessKey : process.env.S3_SECRET_KEY
+  }
+})
+
+const upload = multer({
+  storage: multerS3({
+    s3: s3,
+    bucket: 'fulfillment-s3',
+    contentType: multerS3.AUTO_CONTENT_TYPE,
+    key: function (req, file, cb) {
+      // cb(null, Date.now().toString())
+      cb(null, 'product/' + Date.now() + '.' + file.originalname.split('.').pop());
+    }
+  })
+})
+
 router.get('/admin/product', (req, res) => {
   if (req.user && req.user.is_admin === 1) {
     db.query('SELECT * FROM product', (err, results) => {
@@ -19,11 +42,13 @@ router.get('/admin/product', (req, res) => {
   }
 });
 
-router.post('/add-data', (req, res) => {
-  const { id, name, price, stock, location, category } = req.body;
+router.post('/add-data', upload.single('img'), (req, res) => {
+  const { id, name, price, stock, location, category} = req.body;
+  console.log(req.file);
+  const imageUrl = req.file.location;
 
-  const query = 'INSERT INTO product (id, name, price, stock, location, category) VALUES (?, ?, ?, ?, ?, ?)';
-  db.query(query, [id, name, price, stock, location, category], (err, results) => {
+  const query = 'INSERT INTO product (id, name, price, stock, location, category, image) VALUES (?, ?, ?, ?, ?, ?, ?)';
+  db.query(query, [id, name, price, stock, location, category, imageUrl], (err, results) => {
     if (err) {
       console.error('데이터 추가 오류: ' + err.message);
       res.json({ success: false, message: '데이터 추가 실패' });
