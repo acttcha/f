@@ -122,4 +122,21 @@ router.get('/category-data', (req, res) => {
   });
 });
 
+router.get('/product-image/:id', (req, res) => {
+  const { id } = req.params;
+
+  const query = 'SELECT image FROM product WHERE id = ?';
+
+  db.query(query, [id], (err, results) => {
+    if (err) {
+      console.error('데이터 검색 오류: ' + err.message);
+      res.json({ success: false, message: '데이터 검색 실패' });
+    } else {
+      console.log(results)
+      res.json({ imageURL: results[0].image, success: true, message: '데이터 검색 성공' });
+    }
+  });
+
+});
+
 module.exports = router;
