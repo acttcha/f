@@ -139,7 +139,7 @@
             <tbody>
                 <% product.forEach(product => { %>
                     <tr>
-                      <td><a href="#" onclick="openImageModal('<%= product.id %>')"><%= product.id %></a></td>
+                      <td><a href="javascript:void(0);" onclick="openImageModal('<%= product.id %>')"><%= product.id %></a></td>
                       <td><%= product.name %></td>
                       <td><%= product.price %></td>
                       <td><%= product.stock %></td>

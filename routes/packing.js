@@ -84,7 +84,7 @@ router.get('/singlePacking2', (req, res) => {
             const boxId = req.query.boxId;
             console.log(boxId)
             // 제약 조건 : 집품 여부1 AND 포장 여부 0 AND 상자 번호 일치하는 주문을 1개만 가져오기
-            db.query('SELECT o.id AS orderid, o.quantity, o.shipping_address, p.id AS productid, p.name FROM orders o JOIN product p ON o.product_id = p.id JOIN box_content bc ON o.id = bc.order_id WHERE o.picking_flag = 1 AND o.packing_flag = 0 AND bc.box_id = ? LIMIT 1', [boxId], (error, results) => {
+            db.query('SELECT o.id AS orderid, o.quantity, o.shipping_address, p.id AS productid, p.name, p.image FROM orders o JOIN product p ON o.product_id = p.id JOIN box_content bc ON o.id = bc.order_id WHERE o.picking_flag = 1 AND o.packing_flag = 0 AND bc.box_id = ? LIMIT 1', [boxId], (error, results) => {
                 if (error) {
                     console.error(error);
                     res.status(500).send('데이터베이스 오류');
@@ -183,7 +183,7 @@ router.get('/singlePacking3', (req, res) => {
             const trackingNumber = req.query.trackingNumber;
             console.log(boxId)
             // 제약 조건 : 집품 여부1 AND 포장 여부 0 AND 상자 번호 일치하는 주문을 1개만 가져오기
-            db.query('SELECT o.id AS orderid, o.quantity, o.shipping_address, p.id AS productid, p.name FROM orders o JOIN product p ON o.product_id = p.id JOIN box_content bc ON o.id = bc.order_id WHERE o.picking_flag = 1 AND o.packing_flag = 0 AND bc.box_id = ? LIMIT 1', [boxId], (error, results) => {
+            db.query('SELECT o.id AS orderid, o.quantity, o.shipping_address, p.id AS productid, p.name, p.image FROM orders o JOIN product p ON o.product_id = p.id JOIN box_content bc ON o.id = bc.order_id WHERE o.picking_flag = 1 AND o.packing_flag = 0 AND bc.box_id = ? LIMIT 1', [boxId], (error, results) => {
                 if (error) {
                     console.error(error);
                     res.status(500).send('데이터베이스 오류');

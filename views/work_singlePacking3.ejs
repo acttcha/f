@@ -29,7 +29,7 @@
                                 
                             </div>
                             <div class="main-content">
-                                <img src="../assets/img/양파.jpg" alt="상품 이미지" class="product-image" width="200">
+                                <img src="<%= orders[0].image%>" alt="상품 이미지" class="product-image" width="200">
                                 <h3>상품번호 : <%= orders[0].productid.toString() %></h3>
                                 <h3>상품명 : <%= orders[0].name.toString() %></h3>
                                 <h3 style="color: red;">포장 수량 : <%= orders[0].quantity.toString() %></h3>

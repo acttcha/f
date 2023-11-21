@@ -60,7 +60,7 @@ router.get('/picking2', (req, res) => {
             const boxId = req.query.boxId;
             console.log(boxId)
 
-            db.query('SELECT orders.id AS orderid, orders.quantity, product.id AS productid, product.name, product.location FROM orders JOIN product ON orders.product_id = product.id WHERE orders.picking_flag = 0 LIMIT 1', (error, results) => {
+            db.query('SELECT orders.id AS orderid, orders.quantity, product.id AS productid, product.name, product.location, product.image FROM orders JOIN product ON orders.product_id = product.id WHERE orders.picking_flag = 0 LIMIT 1', (error, results) => {
                 if (error) {
                     console.error(error);
                     res.status(500).send('데이터베이스 오류');
