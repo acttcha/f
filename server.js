@@ -14,6 +14,8 @@ const pickingRoutes = require('./routes/picking');
 const viewBoxRoutes = require('./routes/viewbox');
 const packingRoutes = require('./routes/packing');
 const trackingNumberRoutes = require('./routes/tracking_number');
+const displayRoutes = require('./routes/display');
+
 
 
 
@@ -122,6 +124,8 @@ app.use('/admin', trackingNumberRoutes);
 app.use('/work', pickingRoutes); 
 app.use('/work', viewBoxRoutes); 
 app.use('/work', packingRoutes); 
+app.use('/work', displayRoutes); 
+
 
 
 
