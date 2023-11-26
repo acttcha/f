@@ -15,6 +15,8 @@ const viewBoxRoutes = require('./routes/viewbox');
 const packingRoutes = require('./routes/packing');
 const trackingNumberRoutes = require('./routes/tracking_number');
 const displayRoutes = require('./routes/display');
+const rebinRoutes = require('./routes/rebin');
+
 
 
 
@@ -23,7 +25,7 @@ const displayRoutes = require('./routes/display');
 
 require('dotenv').config() // 환경변수 라이브러리
 
-app.use(methodOverride('_method')) 
+app.use(methodOverride('_method'))
 app.use(express.static(__dirname + '/public'))
 app.set('view engine', 'ejs')
 app.use(express.urlencoded({ extended: false }));
@@ -49,19 +51,19 @@ var MySQLStore = require('express-mysql-session')(session);
 app.use(passport.initialize())
 app.use(session({
   secret: process.env.COOKIE_SECRET,
-  resave : false,
-  saveUninitialized : false,
-  cookie : { maxAge : 60 * 60 * 1000}, //세션 1시간 유지
-  store : new MySQLStore({ // 세션 db에 저장
-    host:'localhost',
+  resave: false,
+  saveUninitialized: false,
+  cookie: { maxAge: 60 * 60 * 1000 }, //세션 1시간 유지
+  store: new MySQLStore({ // 세션 db에 저장
+    host: 'localhost',
     port: 3306,
-    user:'root',
-    password:process.env.DB_PASSWORD,
-    database:'fulfillment'
+    user: 'root',
+    password: process.env.DB_PASSWORD,
+    database: 'fulfillment'
   })
 }))
 
-app.use(passport.session()) 
+app.use(passport.session())
 
 // Passport 초기화 및 설정
 passport.use(new LocalStrategy(async (username, password, done) => {
@@ -100,7 +102,7 @@ passport.serializeUser((user, done) => {
 })
 
 passport.deserializeUser(async (user, done) => {
-  
+
   const query = 'SELECT * FROM user WHERE user_id = ?';
   db.query(query, [user], (err, rows) => {
     if (err) return done(err);
@@ -114,17 +116,18 @@ passport.deserializeUser(async (user, done) => {
 
 
 
-app.use('/', productRoutes); 
-app.use('/', authRoutes); 
-app.use('/admin', ordersRoutes); 
-app.use('/admin', boxRoutes); 
-app.use('/admin', boxcontentRoutes); 
-app.use('/admin', workerControlRoutes); 
+app.use('/', productRoutes);
+app.use('/', authRoutes);
+app.use('/admin', ordersRoutes);
+app.use('/admin', boxRoutes);
+app.use('/admin', boxcontentRoutes);
+app.use('/admin', workerControlRoutes);
 app.use('/admin', trackingNumberRoutes);
-app.use('/work', pickingRoutes); 
-app.use('/work', viewBoxRoutes); 
-app.use('/work', packingRoutes); 
-app.use('/work', displayRoutes); 
+app.use('/work', pickingRoutes);
+app.use('/work', viewBoxRoutes);
+app.use('/work', packingRoutes);
+app.use('/work', displayRoutes);
+app.use('/work', rebinRoutes);
 
 
 
@@ -132,39 +135,39 @@ app.use('/work', displayRoutes);
 
 app.get('/', (req, res) => {
   if (req.user) {
-    if(req.user.is_admin === 0){
+    if (req.user.is_admin === 0) {
       res.redirect('/work')
     }
-    else if(req.user.is_admin === 1){
+    else if (req.user.is_admin === 1) {
       res.redirect('/admin')
     }
     else {
       res.redirect('/default')
     }
   } else {
-    res.redirect('/login'); 
+    res.redirect('/login');
   }
 })
 
 app.get('/admin', (req, res) => {
   if (req.user) {
-    if(req.user.is_admin === 1){
+    if (req.user.is_admin === 1) {
       db.query('SELECT * FROM product', (err, results) => {
         if (err) {
           console.error('상품 데이터 가져오기 오류: ' + err.message);
           res.status(500).send('서버 오류');
         } else {
-          res.render('index_admin.ejs', { products: results, user : req.user });
+          res.render('index_admin.ejs', { products: results, user: req.user });
         }
       });
     }
-    else if(req.user.is_admin === 0){
+    else if (req.user.is_admin === 0) {
       res.status(500).send('관리자로 로그인하세요.');
     }
     else {
       res.redirect('/default')
     }
-  } 
+  }
   else {
     res.redirect('/login');
   }
@@ -172,16 +175,16 @@ app.get('/admin', (req, res) => {
 
 app.get('/admin/mypage', (req, res) => {
   if (req.user) {
-    if(req.user.is_admin === 1){
-      res.render('admin_mypage.ejs', {user : req.user})
+    if (req.user.is_admin === 1) {
+      res.render('admin_mypage.ejs', { user: req.user })
     }
-    else if(req.user.is_admin === 0){
+    else if (req.user.is_admin === 0) {
       res.status(500).send('관리자로 로그인하세요.');
     }
     else {
       res.redirect('/default')
     }
-  } 
+  }
   else {
     res.redirect('/login');
   }
@@ -189,16 +192,16 @@ app.get('/admin/mypage', (req, res) => {
 
 app.get('/admin/chart', (req, res) => {
   if (req.user) {
-    if(req.user.is_admin === 1){
-      res.render('admin_chart.ejs', {user : req.user})
+    if (req.user.is_admin === 1) {
+      res.render('admin_chart.ejs', { user: req.user })
     }
-    else if(req.user.is_admin === 0){
+    else if (req.user.is_admin === 0) {
       res.status(500).send('관리자로 로그인하세요.');
     }
     else {
       res.redirect('/default')
     }
-  } 
+  }
   else {
     res.redirect('/login');
   }
@@ -206,16 +209,16 @@ app.get('/admin/chart', (req, res) => {
 
 app.get('/work', (req, res) => {
   if (req.user) {
-    if(req.user.is_admin === 0){
-      res.render('index_work.ejs', {user : req.user})
+    if (req.user.is_admin === 0) {
+      res.render('index_work.ejs', { user: req.user })
     }
-    else if(req.user.is_admin === 1){
+    else if (req.user.is_admin === 1) {
       res.status(500).send('작업자로 로그인하세요.');
     }
     else {
       res.redirect('/default')
     }
-  } 
+  }
   else {
     res.redirect('/login');
   }
@@ -223,16 +226,16 @@ app.get('/work', (req, res) => {
 
 app.get('/work/mypage', (req, res) => {
   if (req.user) {
-    if(req.user.is_admin === 0){
-      res.render('work_mypage.ejs', {user : req.user})
+    if (req.user.is_admin === 0) {
+      res.render('work_mypage.ejs', { user: req.user })
     }
-    else if(req.user.is_admin === 1){
+    else if (req.user.is_admin === 1) {
       res.status(500).send('작업자로 로그인하세요.');
     }
     else {
       res.redirect('/default')
     }
-  } 
+  }
   else {
     res.redirect('/login');
   }
