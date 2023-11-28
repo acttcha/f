@@ -95,7 +95,7 @@ router.post('/boxinsert', (req, res) => {
     const boxId = req.body.boxId; // boxId를 요청 본문에서 가져옴
     const orders = JSON.parse(req.body.orders);
     const orderId = orders[0].orderid.toString();
-    const userId = req.user.user_id;
+    const userId = req.user.login_id;
 
     const insertQuery = `INSERT INTO box_content (box_id, order_id, rebin_rack_id) VALUES (?, ?, NULL)`;
     const updateQuery = `UPDATE orders SET picking_flag = 1, picking_worker_id = ? WHERE id = ?`;

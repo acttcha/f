@@ -240,27 +240,3 @@ app.get('/work/mypage', (req, res) => {
     res.redirect('/login');
   }
 })
-
-app.get('/picking2', (req, res) => {
-  res.render('picking2.ejs')
-})
-
-app.get('/packing1', (req, res) => {
-  res.render('packing1.ejs')
-})
-
-app.get('/rebin', (req, res) => {
-  res.render('rebin.ejs')
-})
-
-app.get('/users', (req, res) => {
-  const query = 'SELECT * FROM user';
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error('데이터베이스 쿼리 에러:', err);
-      res.status(500).json({ error: '데이터베이스 오류' });
-    } else {
-      res.json(results);
-    }
-  });
-});
