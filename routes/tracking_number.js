@@ -6,7 +6,7 @@ router.get('/trackingNumber', (req, res) => {
     if (req.user && req.user.is_admin === 1) {
       db.query('SELECT * FROM tracking_number', (err, results) => {
         if (err) {
-          console.error('주문 데이터 가져오기 오류: ' + err.message);
+          console.error('송장 로드 오류: ' + err.message);
           res.status(500).send('서버 오류');
         } else {
           res.render('admin_trackingNumber.ejs', { trackingNumbers: results, user: req.user });
@@ -28,7 +28,7 @@ router.get('/trackingNumber/:id', (req, res) => {
     if (req.user && req.user.is_admin === 1) {
       db.query(query, [id], (err, results) => {
       if (err) {
-        console.error('박스 내용물 가져오기 오류: ' + err.message);
+        console.error('송장상세 로드 오류: ' + err.message);
         res.status(500).send('서버 오류');
       } else {
         console.log(results)

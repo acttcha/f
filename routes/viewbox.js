@@ -45,7 +45,7 @@ router.get('/viewbox2', (req, res) => {
             const boxId = req.query.boxId;
             console.log(boxId)
 
-            const query = 'SELECT box_content.id AS box_content_id, box_content.box_id, box_content.order_id, box_content.rebin_rack_id, orders.product_id, orders.quantity, orders.id AS order_id FROM box_content JOIN orders ON box_content.order_id = orders.id WHERE box_content.box_id = ?';
+            const query = 'SELECT box_content.id AS box_content_id, box_content.box_id, box_content.orderdetail_id, box_content.rebin_rack_id, order_detail.product_id, order_detail.quantity, order_detail.orderdetail_id AS orderdetail_id FROM box_content JOIN order_detail ON box_content.orderdetail_id = order_detail.orderdetail_id WHERE box_content.box_id = ?';
 
 
             db.query(query, [boxId], (error, results) => {

@@ -83,16 +83,41 @@ router.get('/singlePacking2', (req, res) => {
         if(req.user.work_access =='포장' || req.user.work_access === 'ALL'){
             const boxId = req.query.boxId;
             console.log(boxId)
-            // 제약 조건 : 집품 여부1 AND 포장 여부 0 AND 상자 번호 일치하는 주문을 1개만 가져오기
-            db.query('SELECT o.id AS orderid, o.quantity, o.shipping_address, p.id AS productid, p.name, p.image FROM orders o JOIN product p ON o.product_id = p.id JOIN box_content bc ON o.id = bc.order_id WHERE o.picking_flag = 1 AND o.packing_flag = 0 AND bc.box_id = ? LIMIT 1', [boxId], (error, results) => {
+
+            const query = `
+            SELECT
+              o.id AS order_id,
+              o.shipping_address,
+              od.orderdetail_id,
+              od.product_id,
+              od.quantity,
+              p.name,
+              p.image,
+              od.picking_flag,
+              od.packing_flag,
+              o.packing_method
+            FROM 
+              orders o
+            JOIN 
+              order_detail od ON o.id = od.order_id
+            JOIN
+              product p ON od.product_id = p.id 
+            JOIN 
+              box_content bc ON od.orderdetail_id = bc.orderdetail_id 
+            WHERE 
+              od.picking_flag = 1 AND od.packing_flag = 0 AND o.packing_method='단일' AND bc.box_id = ? LIMIT 1
+            `
+            // 제약 조건 : 집품 여부1 AND 포장 여부 0 AND 포장 방식이 '단일' AND상자 번호 일치하는 주문을 1개만 가져오기
+            db.query(query, [boxId], (error, results) => {
                 if (error) {
                     console.error(error);
                     res.status(500).send('데이터베이스 오류');
                 } else {
                     if (results.length > 0) {
-                        console.log(results);
-                        res.render('work_singlePacking2.ejs', { user: req.user, boxId: boxId, orders: results });
+                        console.log(results[0]);
+                        res.render('work_singlePacking2.ejs', { user: req.user, boxId: boxId, joinResult: results });
                     } else {
+                      console.log(results[0]);
                         res.send('포장할 상품이 없습니다.');
                     }
                 }
@@ -132,7 +157,7 @@ router.post('/trackingNumber', (req, res) => {
 
     // 중복을 방지하고 랜덤 알파벳 생성
     function generateUniqueTrackingNumber() {
-        const trackingNumber = generateRandomAlphaNumeric(10); // 예시: 10자리 랜덤 알파벳 및 숫자 조합
+        const trackingNumber = generateRandomAlphaNumeric(10); // 10자리 랜덤 알파벳 및 숫자 조합
 
         // 데이터베이스에서 중복 확인
         const checkQuery = 'SELECT * FROM tracking_number WHERE id = ?';
@@ -182,8 +207,32 @@ router.get('/singlePacking3', (req, res) => {
             const boxId = req.query.boxId;
             const trackingNumber = req.query.trackingNumber;
             console.log(boxId)
-            // 제약 조건 : 집품 여부1 AND 포장 여부 0 AND 상자 번호 일치하는 주문을 1개만 가져오기
-            db.query('SELECT o.id AS orderid, o.quantity, o.shipping_address, p.id AS productid, p.name, p.image FROM orders o JOIN product p ON o.product_id = p.id JOIN box_content bc ON o.id = bc.order_id WHERE o.picking_flag = 1 AND o.packing_flag = 0 AND bc.box_id = ? LIMIT 1', [boxId], (error, results) => {
+
+            const query = `
+            SELECT
+              o.id AS order_id,
+              o.shipping_address,
+              od.orderdetail_id,
+              od.product_id,
+              od.quantity,
+              p.name,
+              p.image,
+              od.picking_flag,
+              od.packing_flag,
+              o.packing_method
+            FROM 
+              orders o
+            JOIN 
+              order_detail od ON o.id = od.order_id
+            JOIN
+              product p ON od.product_id = p.id 
+            JOIN 
+              box_content bc ON od.orderdetail_id = bc.orderdetail_id 
+            WHERE 
+              od.picking_flag = 1 AND od.packing_flag = 0 AND o.packing_method='단일' AND bc.box_id = ? LIMIT 1
+            `
+
+            db.query(query, [boxId], (error, results) => {
                 if (error) {
                     console.error(error);
                     res.status(500).send('데이터베이스 오류');
@@ -191,7 +240,7 @@ router.get('/singlePacking3', (req, res) => {
                     if (results.length > 0) {
                         console.log(results);
                         
-                        res.render('work_singlePacking3.ejs', { user: req.user, boxId: boxId, orders: results, trackingNumber: trackingNumber});
+                        res.render('work_singlePacking3.ejs', { user: req.user, boxId: boxId, joinResult: results, trackingNumber: trackingNumber});
                     } else {
                         res.send('포장할 상품이 없습니다.');
                     }
@@ -216,22 +265,50 @@ router.get('/singlePacking3', (req, res) => {
 })
 
 router.post('/finish-packing', (req, res) => {
-    const boxId = req.body.boxId
-    const orderId = req.body.orderId
-  
-    const query = 'UPDATE orders SET packing_flag = 1 WHERE id = ?';
-    const query2 = 'DELETE FROM box_content WHERE order_id = ?';
-    console.log(boxId)
-    db.query(query, [orderId], (err, results) => {
+  const boxId = req.body.boxId;
+  const orderId = req.body.orderId;
+  const orderDetailId = req.body.orderDetailId;
+
+  // Start a transaction
+  db.beginTransaction((err) => {
       if (err) {
-        console.error('데이터 수정 오류: ' + err.message);
-        res.json({ success: false, message: '데이터 수정 실패' });
-      } else {
-        db.query(query2, [orderId], (err, results2) => {
-            res.redirect(`/work/singlePacking2?boxId=${boxId}`);
-        })
+          console.error('트랜잭션 시작 오류: ' + err.message);
+          res.json({ success: false, message: '트랜잭션 시작 실패' });
+          return;
       }
-    });
+
+      const query = 'UPDATE order_detail SET packing_flag = 1, packing_worker_id = ? WHERE orderdetail_id = ?';
+      const query2 = 'DELETE FROM box_content WHERE orderdetail_id = ?';
+
+      db.query(query, [req.user.login_id, orderDetailId], (err, results) => {
+          if (err) {
+              return db.rollback(() => {
+                  console.error('데이터 수정 오류: ' + err.message);
+                  res.json({ success: false, message: '데이터 수정 실패' });
+              });
+          }
+
+          db.query(query2, [orderDetailId], (err2, results2) => {
+              if (err2) {
+                  return db.rollback(() => {
+                      console.error('데이터 삭제 오류: ' + err2.message);
+                      res.json({ success: false, message: '데이터 삭제 실패' });
+                  });
+              }
+
+              db.commit((err3) => {
+                  if (err3) {
+                      return db.rollback(() => {
+                          console.error('트랜잭션 커밋 오류: ' + err3.message);
+                          res.json({ success: false, message: '트랜잭션 커밋 실패' });
+                      });
+                  }
+
+                  res.redirect(`/work/singlePacking2?boxId=${boxId}`);
+              });
+          });
+      });
+  });
 });
 
 

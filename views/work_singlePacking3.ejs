@@ -29,11 +29,11 @@
                                 
                             </div>
                             <div class="main-content">
-                                <img src="<%= orders[0].image%>" alt="상품 이미지" class="product-image" width="200">
-                                <h3>상품번호 : <%= orders[0].productid.toString() %></h3>
-                                <h3>상품명 : <%= orders[0].name.toString() %></h3>
-                                <h3 style="color: red;">포장 수량 : <%= orders[0].quantity.toString() %></h3>
-                                <h3>배송지 : <%= orders[0].shipping_address%></h3>
+                                <img src="<%= joinResult[0].image%>" alt="상품 이미지" class="product-image" width="200">
+                                <h3>상품번호 : <%= joinResult[0].product_id.toString() %></h3>
+                                <h3>상품명 : <%= joinResult[0].name.toString() %></h3>
+                                <h3 style="color: red;">포장 수량 : <%= joinResult[0].quantity.toString() %></h3>
+                                <h3>배송지 : <%= joinResult[0].shipping_address%></h3>
                             </div>
                             <div class="footer">
                                 <p>현재 토트 번호 : <%= boxId %></p>
@@ -41,7 +41,8 @@
                                 <div style="display: flex; justify-content: center;">
                                 <form action="/work/finish-packing" method="post">
                                     <input type="hidden" name="boxId" value="<%= boxId %>">
-                                    <input type="hidden" name="orderId" value="<%= orders[0].orderid %>">
+                                    <input type="hidden" name="orderId" value="<%= joinResult[0].order_id %>">
+                                    <input type="hidden" name="orderDetailId" value="<%= joinResult[0].orderdetail_id %>">
                                     <button type="submit" id="packingfinishbtn" class="btn btn-success">포장 완료</button>
                                 </form>
                                 
@@ -60,9 +61,9 @@
         <script>
             const boxId = '<%= boxId %>';
             const trackingNumber = '<%= trackingNumber %>';
-            const orderId = '<%= orders[0].orderid %>';
-            const productName = '<%= orders[0].name %>';
-            const address = '<%= orders[0].shipping_address %>';
+            const orderId = '<%= joinResult[0].order_id %>';
+            const productName = '<%= joinResult[0].name %>';
+            const address = '<%= joinResult[0].shipping_address %>';
             
 
             fetch('/work/generatePDF', {
@@ -70,7 +71,7 @@
                 headers: {
                 'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ boxId, trackingNumber, orderId, productName, address }),
+                body: JSON.stringify({ boxId, trackingNumber, orderId, productName, address}),
             })
             .then(response => response.blob())
             .then(blob => {

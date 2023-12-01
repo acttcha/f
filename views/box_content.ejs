@@ -27,7 +27,7 @@
                 <tr>
                     <th>id</th>
                     <th>상자번호</th>
-                    <th>주문번호</th>
+                    <th>주문상세번호</th>
                     <th>상품번호</th>
                     <th>수량</th>
                     <th>리빈선반위치</th>
@@ -40,7 +40,7 @@
                 <tr>
                     <th>id</th>
                     <th>상자번호</th>
-                    <th>주문번호</th>
+                    <th>주문상세번호</th>
                     <th>상품번호</th>
                     <th>수량</th>
                     <th>리빈선반위치</th>
@@ -52,7 +52,7 @@
                     <tr>
                       <td><%= box_content.box_content_id %></a></td>
                       <td><%= box_content.box_id %></td>
-                      <td><%= box_content.order_id %></td>
+                      <td><%= box_content.orderdetail_id %></td>
                       <td><%= box_content.product_id %></td>
                       <td><%= box_content.quantity %></td>
                       <td><%= box_content.rebin_rack_id %></td>
@@ -62,7 +62,7 @@
                             <i class="bx bx-dots-vertical-rounded"></i>
                           </button>
                           <div class="dropdown-menu">
-                            <button id="outModalBtn<%= box_content.box_content_id %>" class="dropdown-item" data-id="<%= box_content.box_content_id %>" data-orderid="<%= box_content.order_id %>">
+                            <button id="outModalBtn<%= box_content.box_content_id %>" class="dropdown-item" data-id="<%= box_content.box_content_id %>" data-orderdetailid="<%= box_content.orderdetail_id %>">
                               <i class="bx bx-edit-alt me-1"></i> 토트에서 해당 상품 꺼내기
                             </button>
                           </div>
@@ -88,10 +88,10 @@ document.addEventListener("click", function(event) {
   if (event.target.id.includes("outModalBtn")) {
     openModal("outModal")
     const Id = event.target.getAttribute("data-id");
-    const orderId = event.target.getAttribute("data-orderId");
+    const orderdetailId = event.target.getAttribute("data-orderdetailId");
     console.log(Id)
     window.moveId = Id;
-    window.moveOrderId = orderId;
+    window.moveOrderDetailId = orderdetailId;
 
   }
 });
@@ -113,16 +113,16 @@ window.addEventListener("click", function(event) {
 document.getElementById("outDataBtn").addEventListener("click", function() {
 
     const Id = window.moveId;
-    const orderId = window.moveOrderId;
+    const orderdetailId = window.moveOrderDetailId;
     console.log(Id);
-    console.log(orderId);
+    console.log(orderdetailId);
 
     fetch("/admin/deleteBoxContent/" + Id, { 
         method: "DELETE", 
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ order_id: orderId })
+        body: JSON.stringify({ orderdetail_id: orderdetailId })
         ,
     })
     .then(response => response.json())

@@ -19,7 +19,7 @@ const upload = multer({
     bucket: 'fulfillment-s3',
     contentType: multerS3.AUTO_CONTENT_TYPE,
     key: function (req, file, cb) {
-      cb(null, 'product/' + Date.now() + '.' + file.originalname.split('.').pop());
+      cb(null, 'product/ID_' + req.body.id + '.' + file.originalname.split('.').pop());
     }
   })
 })

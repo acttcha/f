@@ -60,14 +60,14 @@ router.get('/picking2', (req, res) => {
                 const boxId = req.query.boxId;
                 console.log(boxId)
 
-                db.query('SELECT orders.id AS orderid, orders.quantity, product.id AS productid, product.name, product.location, product.image FROM orders JOIN product ON orders.product_id = product.id WHERE orders.picking_flag = 0 LIMIT 1', (error, results) => {
+                db.query('SELECT order_detail.orderdetail_id AS orderdetail_id, order_detail.quantity, product.id AS productid, product.name, product.location, product.image FROM order_detail JOIN product ON order_detail.product_id = product.id WHERE order_detail.picking_flag = 0 LIMIT 1', (error, results) => {
                     if (error) {
                         console.error(error);
                         res.status(500).send('데이터베이스 오류');
                     } else {
                         if (results.length > 0) {
                             console.log(results);
-                            res.render('picking2.ejs', { user: req.user, boxId: boxId, orders: results });
+                            res.render('picking2.ejs', { user: req.user, boxId: boxId, orderDetail: results });
                         } else {
                             performBoxFinish(boxId, res);
                         }
@@ -93,12 +93,15 @@ router.get('/picking2', (req, res) => {
 
 router.post('/boxinsert', (req, res) => {
     const boxId = req.body.boxId; // boxId를 요청 본문에서 가져옴
-    const orders = JSON.parse(req.body.orders);
-    const orderId = orders[0].orderid.toString();
+    const orderDetail = JSON.parse(req.body.orderDetail);
+    const orderDetailId = orderDetail[0].orderdetail_id.toString();
+    const productId = orderDetail[0].productid.toString();
+    const pickingCount = orderDetail[0].quantity.toString();
     const userId = req.user.login_id;
 
-    const insertQuery = `INSERT INTO box_content (box_id, order_id, rebin_rack_id) VALUES (?, ?, NULL)`;
-    const updateQuery = `UPDATE orders SET picking_flag = 1, picking_worker_id = ? WHERE id = ?`;
+    const insertQuery = `INSERT INTO box_content (box_id, orderdetail_id, rebin_rack_id) VALUES (?, ?, NULL)`;
+    const updateQuery = `UPDATE order_detail SET picking_flag = 1, picking_worker_id = ? WHERE orderdetail_id = ?`;
+    const updateQuery2 = `UPDATE product SET displayed_stock = displayed_stock - ? WHERE id = ?`
 
     db.beginTransaction((err) => {
         if (err) {
@@ -106,31 +109,43 @@ router.post('/boxinsert', (req, res) => {
             res.status(500).send('데이터베이스 트랜잭션 오류');
             return;
         }
-
-        db.query(insertQuery, [boxId, orderId], (insertError) => {
+        // 1: 토트 내용물 넣기
+        db.query(insertQuery, [boxId, orderDetailId], (insertError) => {
             if (insertError) {
                 db.rollback(() => {
                     console.error(insertError);
                     res.status(500).send('데이터베이스 오류');
                 });
             } else {
-                db.query(updateQuery, [userId, orderId], (updateError) => {
+                // 2: 집품 여부 1로 업데이트, user id 받아와서 picking_worker_id에 업데이트
+                db.query(updateQuery, [userId, orderDetailId], (updateError) => {
                     if (updateError) {
                         db.rollback(() => {
                             console.error(updateError);
                             res.status(500).send('데이터베이스 오류');
                         });
+                        
                     } else {
-                        db.commit((commitError) => {
-                            if (commitError) {
+                        // 3: 상품 진열 수량 - 집품 수량
+                        db.query(updateQuery2, [pickingCount, productId], (updateError2) => {
+                            if (updateError2) {
                                 db.rollback(() => {
-                                    console.error(commitError);
+                                    console.error(updateError2);
                                     res.status(500).send('데이터베이스 오류');
                                 });
                             } else {
-                                res.redirect(`/work/picking2?boxId=${boxId}`);
+                                db.commit((commitError) => {
+                                    if (commitError) {
+                                        db.rollback(() => {
+                                            console.error(commitError);
+                                            res.status(500).send('데이터베이스 오류');
+                                        });
+                                    } else {
+                                        res.redirect(`/work/picking2?boxId=${boxId}`);
+                                    }
+                                });
                             }
-                        });
+                        })
                     }
                 });
             }

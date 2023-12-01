@@ -31,16 +31,16 @@
 
                                 </div>
                                 <div class="main-content">
-                                    <img src="<%= orders[0].image %>" alt="상품 이미지" class="product-image" width="200">
-                                    <h3>주문번호 : <%= orders[0].orderid.toString() %>
+                                    <img src="<%= orderDetail[0].image %>" alt="상품 이미지" class="product-image" width="200">
+                                    <h3>주문상세번호 : <%= orderDetail[0].orderdetail_id.toString() %>
                                     </h3>
-                                    <h3>상품번호 : <%= orders[0].productid.toString() %>
+                                    <h3>상품번호 : <%= orderDetail[0].productid.toString() %>
                                     </h3>
-                                    <h3>상품명 : <%= orders[0].name.toString() %>
+                                    <h3>상품명 : <%= orderDetail[0].name.toString() %>
                                     </h3>
-                                    <h3 style="color: red;">집품 수량 : <%= orders[0].quantity.toString() %>
+                                    <h3 style="color: red;">집품 수량 : <%= orderDetail[0].quantity.toString() %>
                                     </h3>
-                                    <h3>진열된 위치 : <%= orders[0].location %>
+                                    <h3>진열된 위치 : <%= orderDetail[0].location %>
                                     </h3>
                                 </div>
                                 <div class="footer">
@@ -49,7 +49,7 @@
                                     <div style="display: flex; justify-content: center;">
                                         <form action="/work/boxinsert" method="post">
                                             <input type="hidden" name="boxId" value="<%= boxId %>">
-                                            <input type="hidden" name="orders" value="<%= JSON.stringify(orders) %>">
+                                            <input type="hidden" name="orderDetail" value="<%= JSON.stringify(orderDetail) %>">
                                             <button type="submit" id="insertbtn" class="btn btn-success">담기 완료</button>
                                         </form>
                                         <form action="/work/boxfinish" method="post">
