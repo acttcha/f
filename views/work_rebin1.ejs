@@ -27,19 +27,31 @@
 
                             <div class="container">
                                 <div class="sidebar">
-                                    <h1>토트 바코드를 스캔 또는 입력하세요.</h1>
+                                    <h1>작업대 바코드를 스캔 또는 입력하세요.</h1>
 
                                 </div>
                                 <div class="main-content">
                                     <div class="mb-3">
                                         <div class="custom-center">
-                                            <input type="email" class="form-control custom-input" id="boxnum"
-                                                placeholder="토트 번호">
+                                            <input type="email" class="form-control custom-input" list="datalistOptions"
+                                                id="workbench_id" placeholder="작업대 번호">
+                                            <datalist id="datalistOptions">
+                                                <option value="WB00001">
+                                                <option value="WB00002">
+                                                <option value="WB00003">
+                                                <option value="WB00004">
+                                                <option value="WB00005">
+                                                <option value="WB00006">
+                                                <option value="WB00007">
+                                                <option value="WB00008">
+                                                <option value="WB00009">
+                                                <option value="WB00010">
+                                            </datalist>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="footer">
-                                    <button id="startbtn" class="btn btn-success">리빈 시작하기</button>
+                                    <button id="startbtn" class="btn btn-success">작업대 선택</button>
                                 </div>
                             </div>
 
@@ -55,10 +67,9 @@
         <script>
 
             document.getElementById("startbtn").addEventListener("click", function () {
-                const boxNumber = document.getElementById("boxnum").value;
-                console.log(boxNumber)
+                const workbenchId = document.getElementById("workbench_id").value;
 
-                fetch("/work/boxcheck/" + boxNumber, {
+                fetch("/work/workbench-check/" + workbenchId, {
                     method: "GET",
                     headers: {
                         'Content-Type': 'application/json'
@@ -67,7 +78,7 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            window.location.href = "/work/picking2?boxId=" + boxNumber;
+                            window.location.href = "/work/rebin2?workbenchId=" + workbenchId;
                         } else {
                             alert(data.message);
                         }

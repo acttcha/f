@@ -20,9 +20,9 @@
                 <div id="layoutSidenav_content">
                     <main>
                         <div class="container-fluid px-4">
-                            <h1 class="mt-4">집품 작업</h1>
+                            <h1 class="mt-4">리빈 작업</h1>
                             <ol class="breadcrumb mb-4">
-                                <li class="breadcrumb-item active">Picking</li>
+                                <li class="breadcrumb-item active">Rebin</li>
                             </ol>
 
                             <div class="container">
@@ -51,7 +51,8 @@
                                     </div>
                                 </div>
                                 <div class="footer">
-                                    <button id="startbtn" class="btn btn-success">집품 시작하기</button>
+                                    <p>현재 작업대 번호 : <%= workbenchId %></p>
+                                    <button id="startbtn" class="btn btn-success">입력 완료</button>
                                 </div>
                             </div>
 
@@ -67,10 +68,9 @@
         <script>
 
             document.getElementById("startbtn").addEventListener("click", function () {
-                const boxNumber = document.getElementById("boxnum").value;
-                console.log(boxNumber)
+                const workbenchId = document.getElementById("workbench_id").value;
 
-                fetch("/work/boxcheck/" + boxNumber, {
+                fetch("/work/workbench-check/" + workbenchId, {
                     method: "GET",
                     headers: {
                         'Content-Type': 'application/json'
@@ -79,7 +79,7 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            window.location.href = "/work/picking2?boxId=" + boxNumber;
+                            window.location.href = "/work/rebin2?workbenchId=" + workbenchId;
                         } else {
                             alert(data.message);
                         }
