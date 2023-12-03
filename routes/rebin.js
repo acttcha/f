@@ -75,4 +75,31 @@ router.get('/rebin2', (req, res) => {
   }
 })
 
+router.get('/boxcheck-rebin/:id', (req, res) => {
+  const { id } = req.params;
+
+  const query = 'SELECT * FROM box WHERE box_id = ?';
+
+  db.query(query, [id], (err, results) => {
+      if (err) {
+          console.error('데이터 검색 오류: ' + err.message);
+          res.json({ success: false, message: '데이터 검색 실패' });
+      } else {
+          if (results.length > 0) {
+              if (results[0].availability == 1 && results[0].deadline_status == 0) {
+                  res.json({ success: true, message: '사용 가능한 토트 확인' });
+              } else if (results[0].availability == 0) {
+                  res.json({ success: false, message: '토트가 이미 사용 중입니다.' });
+              } else if (results[0].deadline_status == 1) {
+                  res.json({ success: false, message: '마감된 토트입니다.' });
+              } else {
+                  res.json({ success: false, message: '값이 올바르지 않습니다.' });
+              }
+          } else {
+              res.json({ success: false, message: '일치하는 토트가 없습니다.' });
+          }
+      }
+  });
+});
+
 module.exports = router;

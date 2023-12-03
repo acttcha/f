@@ -79,7 +79,9 @@
 
     </div>
 </div>
-
+<p id="hiddenBoxId" hidden>
+<%= boxId %>
+</p>
 <script>
 
 
@@ -117,12 +119,15 @@ document.getElementById("outDataBtn").addEventListener("click", function() {
     console.log(Id);
     console.log(orderdetailId);
 
+    const boxId = document.getElementById("hiddenBoxId").innerText;
+    console.log("클라이언트"+boxId)
+
     fetch("/admin/deleteBoxContent/" + Id, { 
         method: "DELETE", 
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ orderdetail_id: orderdetailId })
+        body: JSON.stringify({ orderdetail_id: orderdetailId, boxId: boxId})
         ,
     })
     .then(response => response.json())

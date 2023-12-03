@@ -62,10 +62,12 @@ router.get('/boxContentCheck/:id', (req, res) => {
         res.json({ success: false, message: '데이터 검색 실패' });
       } else {
         if (results.length > 0) {
-            if (results[0].deadline_status == 1) {
-                res.json({ success: true, message: '포장할 수 있는 토트입니다.' });
+            if (results[0].deadline_status == 1 && results[0].packing_type == '단일') {
+                res.json({ success: true, message: '포장할 수 있는 단일 포장 토트입니다.' });
             } else if (results[0].deadline_status == 0) {
                 res.json({ success: false, message: '마감되지 않은 토트입니다.' });
+            } else if (results[0].packing_type == '다중'){
+                res.json({ success: false, message: '다중 포장 토트입니다.'})
             } else {
                 res.json({ success: false, message: '마감여부 값이 올바르지 않습니다.' });
             }
@@ -105,7 +107,7 @@ router.get('/singlePacking2', (req, res) => {
             JOIN 
               box_content bc ON od.orderdetail_id = bc.orderdetail_id 
             WHERE 
-              od.picking_flag = 1 AND od.packing_flag = 0 AND o.packing_method='단일' AND bc.box_id = ? LIMIT 1
+              od.picking_flag = 1 AND od.packing_flag = 0 AND o.packing_type='단일' AND bc.box_id = ? LIMIT 1
             `
             // 제약 조건 : 집품 여부1 AND 포장 여부 0 AND 포장 방식이 '단일' AND상자 번호 일치하는 주문을 1개만 가져오기
             db.query(query, [boxId], (error, results) => {
@@ -229,7 +231,7 @@ router.get('/singlePacking3', (req, res) => {
             JOIN 
               box_content bc ON od.orderdetail_id = bc.orderdetail_id 
             WHERE 
-              od.picking_flag = 1 AND od.packing_flag = 0 AND o.packing_method='단일' AND bc.box_id = ? LIMIT 1
+              od.picking_flag = 1 AND od.packing_flag = 0 AND o.packing_type='단일' AND bc.box_id = ? LIMIT 1
             `
 
             db.query(query, [boxId], (error, results) => {

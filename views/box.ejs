@@ -48,6 +48,7 @@
                     <th>상자번호</th>
                     <th>가용여부</th>
                     <th>마감여부</th>
+                    <th>포장유형</th>
                     <th>변경</th>
         
                 </tr>
@@ -57,6 +58,7 @@
                     <th>상자번호</th>
                     <th>가용여부</th>
                     <th>마감여부</th>
+                    <th>포장유형</th>
                     <th>변경</th>
 
                 </tr>
@@ -67,6 +69,7 @@
                       <td><a href="/admin/box/<%= box.box_id %>"><%= box.box_id %></a></td>
                       <td><%= box.availability %></td>
                       <td><%= box.deadline_status %></td>
+                      <td><%= box.packing_type %></td>
                       <td>
                         <div class="dropdown">
                           <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">

@@ -57,6 +57,7 @@
                     <th>이름</th>
                     <th>작업권한</th>
                     <th>작업구역</th>
+                    <th>집품권한</th>
                     <th>변경</th>
 
         
@@ -69,6 +70,7 @@
                     <th>이름</th>
                     <th>작업권한</th>
                     <th>작업구역</th>
+                    <th>집품권한</th>
                     <th>변경</th>
                 </tr>
             </tfoot>
@@ -80,6 +82,7 @@
                       <td><%= worker.name %></td>
                       <td><%= worker.work_access %></td>
                       <td><%= worker.work_line %></td>
+                      <td><%= worker.picking_access %></td>
                       <td>
                         <div class="dropdown">
                           <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">

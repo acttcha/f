@@ -49,10 +49,20 @@
                                             </datalist>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="footer">
-                                    <p>현재 작업대 번호 : <%= workbenchId %></p>
                                     <button id="startbtn" class="btn btn-success">입력 완료</button>
+
+                                </div>
+                                <div class="footer d-flex justify-content-between align-items-center">
+                                    <p class="m-0">현재 작업대 번호 : <%= workbenchId %></p>
+
+                                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                        <button class="btn btn-secondary me-md-2" type="button">완료 셀 조회</button>
+                                        <div class="btn-group-toggle" data-toggle="buttons">
+                                            <label class="btn btn-secondary">
+                                              <input type="checkbox" name="options" id="option1" autocomplete="off" checked> 작업 할당 받기
+                                            </label>
+                                          </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -66,11 +76,10 @@
             crossorigin="anonymous"></script>
         <script src="../js/scripts.js"></script>
         <script>
-
             document.getElementById("startbtn").addEventListener("click", function () {
-                const workbenchId = document.getElementById("workbench_id").value;
+                const boxNumber = document.getElementById("boxnum").value;
 
-                fetch("/work/workbench-check/" + workbenchId, {
+                fetch("/work/boxcheck-rebin/" + boxNumber, {
                     method: "GET",
                     headers: {
                         'Content-Type': 'application/json'
@@ -79,13 +88,14 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            window.location.href = "/work/rebin2?workbenchId=" + workbenchId;
+                            window.location.href = "/work/rebin3?boxId=" + boxNumber;
                         } else {
                             alert(data.message);
                         }
                     });
             });
         </script>
+          
 </body>
 
 </html>

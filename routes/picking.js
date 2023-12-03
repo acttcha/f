@@ -60,7 +60,21 @@ router.get('/picking2', (req, res) => {
                 const boxId = req.query.boxId;
                 console.log(boxId)
 
-                db.query('SELECT order_detail.orderdetail_id AS orderdetail_id, order_detail.quantity, product.id AS productid, product.name, product.location, product.image FROM order_detail JOIN product ON order_detail.product_id = product.id WHERE order_detail.picking_flag = 0 LIMIT 1', (error, results) => {
+                const query = `
+                SELECT 
+                order_detail.orderdetail_id AS orderdetail_id, 
+                order_detail.quantity, 
+                product.id AS productid, 
+                product.name, 
+                product.location, 
+                product.image 
+                FROM order_detail 
+                JOIN product ON order_detail.product_id = product.id 
+                WHERE order_detail.picking_flag = 0 AND order_detail.packing_type = ? 
+                LIMIT 1;
+                `
+
+                db.query(query, [req.user.picking_access], (error, results) => {
                     if (error) {
                         console.error(error);
                         res.status(500).send('데이터베이스 오류');
@@ -102,6 +116,7 @@ router.post('/boxinsert', (req, res) => {
     const insertQuery = `INSERT INTO box_content (box_id, orderdetail_id, rebin_rack_id) VALUES (?, ?, NULL)`;
     const updateQuery = `UPDATE order_detail SET picking_flag = 1, picking_worker_id = ? WHERE orderdetail_id = ?`;
     const updateQuery2 = `UPDATE product SET displayed_stock = displayed_stock - ? WHERE id = ?`
+    const updateQuery3 = `UPDATE box SET packing_type = ? WHERE box_id = ?`
 
     db.beginTransaction((err) => {
         if (err) {
@@ -124,7 +139,7 @@ router.post('/boxinsert', (req, res) => {
                             console.error(updateError);
                             res.status(500).send('데이터베이스 오류');
                         });
-                        
+
                     } else {
                         // 3: 상품 진열 수량 - 집품 수량
                         db.query(updateQuery2, [pickingCount, productId], (updateError2) => {
@@ -134,16 +149,27 @@ router.post('/boxinsert', (req, res) => {
                                     res.status(500).send('데이터베이스 오류');
                                 });
                             } else {
-                                db.commit((commitError) => {
-                                    if (commitError) {
+                                // 4: 박스 유형을 유저 packing_access에 맞게 업데이트
+                                db.query(updateQuery3, [req.user.picking_access, boxId], (updateError3) => {
+                                    if (updateError3) {
                                         db.rollback(() => {
-                                            console.error(commitError);
+                                            console.error(updateError3);
                                             res.status(500).send('데이터베이스 오류');
                                         });
                                     } else {
-                                        res.redirect(`/work/picking2?boxId=${boxId}`);
+                                        db.commit((commitError) => {
+                                            if (commitError) {
+                                                db.rollback(() => {
+                                                    console.error(commitError);
+                                                    res.status(500).send('데이터베이스 오류');
+                                                });
+                                            } else {
+                                                res.redirect(`/work/picking2?boxId=${boxId}`);
+                                            }
+                                        });
                                     }
-                                });
+                                })
+
                             }
                         })
                     }
