@@ -97,7 +97,7 @@ router.get('/singlePacking2', (req, res) => {
               p.image,
               od.picking_flag,
               od.packing_flag,
-              o.packing_method
+              o.packing_type
             FROM 
               orders o
             JOIN 

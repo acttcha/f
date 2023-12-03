@@ -27,41 +27,42 @@
 
                             <div class="container">
                                 <div class="sidebar">
-                                    <h1>1. 토트 바코드를 스캔 또는 입력하세요.</h1>
+                                    <h1>2. 해당 토트 안의 상품들을 리빈 셀에 넣어주세요.</h1>
 
                                 </div>
                                 <div class="main-content">
-                                    <div class="mb-3">
-                                        <div class="custom-center">
-                                            <input type="email" class="form-control custom-input" list="boxlist"
-                                                id="boxnum" placeholder="토트 번호">
-                                            <datalist id="boxlist">
-                                                <option value="B000001">
-                                                <option value="B000002">
-                                                <option value="B000003">
-                                                <option value="B000004">
-                                                <option value="B000005">
-                                                <option value="B000006">
-                                                <option value="B000007">
-                                                <option value="B000008">
-                                                <option value="B000009">
-                                                <option value="B000010">
-                                            </datalist>
+                                    <div
+                                        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                                        <div class="mb-3">
+                                            <img src="<%= results[0].image %>" alt="상품 이미지" class="product-image"
+                                                width="200">
+                                            <h3>상품번호 : <%= results[0].productId.toString() %>
+                                            </h3>
+                                            <h3>상품명 : <%= results[0].name.toString() %>
+                                            </h3>
+                                            <h3 style="color: red;">수량 : <%= results[0].quantity.toString() %>
+                                            </h3>
+                                            <h3>리빈 셀 위치 : <%= results[0].rebin_rack_id %>
+                                            </h3>
                                         </div>
                                     </div>
-                                    <button id="startbtn" class="btn btn-success">입력 완료</button>
+                                    <button id="finishbtn" class="btn btn-success">배치 완료</button>
 
                                 </div>
                                 <div class="footer d-flex justify-content-between align-items-center">
-                                    <p class="m-0">현재 작업대 번호 : <%= workbenchId %></p>
+                                    <p class="m-0">현재 작업대 번호 : <%= workbenchId %> <br>현재 집품상자 번호 : <%= boxId %>
+                                    </p>
+                                    <p style="font-size: x-large;" class="m-0">남은 상품 수 : <%= remainCount %>
+                                    </p>
 
                                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                                         <button class="btn btn-secondary me-md-2" type="button">완료 셀 조회</button>
                                         <div class="btn-group-toggle" data-toggle="buttons">
                                             <label class="btn btn-secondary">
-                                              <input type="checkbox" name="options" id="option1" autocomplete="off" checked> 작업 할당 받기
+                                                <input type="checkbox" name="options" id="option1" autocomplete="off"
+                                                    checked> 작업 할당 받기
                                             </label>
-                                          </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -71,33 +72,47 @@
                     </main>
                     <%- include('footer.ejs')%>
                 </div>
+                <input type="hidden" id="orderDetailId" value="<%= results[0].orderdetail_id %>">
+                <input type="hidden" id="boxId" value="<%= boxId %>">
                 <input type="hidden" id="workbenchId" value="<%= workbenchId %>">
+                <input type="hidden" id="rebinrackId" value="<%= results[0].rebin_rack_id %>">
+                <input type="hidden" id="orderId" value="<%= results[0].order_id %>">
+
+
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
             crossorigin="anonymous"></script>
         <script src="../js/scripts.js"></script>
         <script>
-            document.getElementById("startbtn").addEventListener("click", function () {
-                const boxNumber = document.getElementById("boxnum").value;
+            document.getElementById("finishbtn").addEventListener("click", function () {
+                const orderDetailId = document.getElementById("orderDetailId").value;
+                const boxId = document.getElementById("boxId").value;
                 const workbenchId = document.getElementById("workbenchId").value;
+                const rebinrackId = document.getElementById("rebinrackId").value;
+                const orderId = document.getElementById("orderId").value;
 
-                fetch("/work/boxcheck-rebin/" + boxNumber, {
-                    method: "GET",
+
+                fetch("/work/finish-rebin/", {
+                    method: "POST",
                     headers: {
                         'Content-Type': 'application/json'
                     },
+                    body: JSON.stringify({ boxId, workbenchId, orderDetailId, rebinrackId, orderId }),
                 })
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            window.location.href = "/work/rebin3?boxId=" + boxNumber + "&workbenchId=" + workbenchId;
+                            window.location.href = "/work/rebin3?boxId=" + boxId + "&workbenchId=" + workbenchId;
+                            location.reload();
+
                         } else {
                             alert(data.message);
                         }
                     });
             });
         </script>
-          
+
+
 </body>
 
 </html>
