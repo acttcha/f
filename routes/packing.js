@@ -343,5 +343,335 @@ router.post('/generatePDF', (req, res) => {
   });
 });
 
+router.get('/multiPacking1', (req, res) => {
+  if (req.user) {
+    if(req.user.is_admin === 0){
+      if(req.user.work_access =='포장' || req.user.work_access =='ALL'){
+          res.render('work_multiPacking1.ejs', {user : req.user})
+      }
+      else {
+          res.status(500).send('작업 권한이 없습니다.');
+      }
+    }
+    else if(req.user.is_admin === 1){
+      res.status(500).send('작업자로 로그인하세요.');
+    }
+    else {
+      res.redirect('/default')
+    }
+  } 
+  else {
+    res.redirect('/login');
+  }
+})
+
+router.get('/packing-workbench-check/:id', (req, res) => {
+  const { id } = req.params;
+
+  const query = 'SELECT * FROM workbench WHERE id = ?';
+
+  db.query(query, [id], (err, results) => {
+    if (err) {
+      console.error('데이터 검색 오류: ' + err.message);
+      res.json({ success: false, message: '데이터 검색 실패' });
+    } else {
+      if (results.length > 0) {
+        if (results[0].work_category == '포장' && results[0].status == 1) {
+          res.json({ success: true, message: '작업 가능한 포장작업대 확인' });
+        } else if (results[0].work_category == '포장' && results[0].status == 0) {
+          res.json({ success: false, message: '현재 작업중인 포장작업대 입니다.' });
+        } else if (results[0].work_category !== '포장' && results[0].status == 1) {
+          res.json({ success: false, message: '포장 작업대가 아닙니다.' });
+        } else {
+          res.json({ success: false, message: '값이 올바르지 않습니다.' });
+        }
+      } else {
+        res.json({ success: false, message: '일치하는 작업대가 없습니다.' });
+      }
+    }
+  });
+});
+
+router.get('/multiPacking2', (req, res) => {
+
+  if (req.user) {
+    if (req.user.is_admin === 0) {
+      if (req.user.work_access == '포장' || req.user.work_access === 'ALL') {
+        const workbenchId = req.query.workbenchId;
+        
+        const query = 'SELECT * FROM rebin_rack WHERE finish_flag = 1';
+        db.query(query,(err, results)=>{
+          if(err){
+            console.log(err);
+            res.json({success:false, message: '리빈선반 로드 실패'});
+          }
+          else{
+            res.render('work_multiPacking2.ejs', { user: req.user, workbenchId: workbenchId, results: results});
+
+          }
+        })
+      }
+      else {
+        res.status(500).send('작업 권한이 없습니다.');
+      }
+    }
+    else if (req.user.is_admin === 1) {
+      res.status(500).send('작업자로 로그인하세요.');
+    }
+    else {
+      res.redirect('/default')
+    }
+  }
+  else {
+    res.redirect('/login');
+  }
+})
+
+router.get('/multiPacking3', (req, res) => {
+
+  if (req.user) {
+    if (req.user.is_admin === 0) {
+      if (req.user.work_access == '포장' || req.user.work_access === 'ALL') {
+        const workbenchId = req.query.workbenchId;
+        const rebinrackId = req.query.rebinrackId;
+        
+        const query = `
+        SELECT 
+        o.id AS orderId,
+        o.shipping_address,
+        p.id AS productId,
+        p.image,
+        p.name,
+        od.quantity
+        FROM rebinrack_detail rd
+        INNER JOIN order_detail od ON rd.orderdetail_id = od.orderdetail_id
+        INNER JOIN product p ON od.product_id = p.id
+        INNER JOIN orders o ON od.order_id = o.id
+        WHERE rebinrack_id = ?
+        `
+        db.query(query, [rebinrackId],(err, results)=>{
+          if(err){
+            console.log(err);
+            res.json({success:false, message: '리빈선반 로드 실패'});
+          }
+          else{
+            console.log(results);
+            res.render('work_multiPacking3.ejs', { user: req.user, workbenchId: workbenchId, rebinrackId: rebinrackId, results: results});
+
+          }
+        })
+      }
+      else {
+        res.status(500).send('작업 권한이 없습니다.');
+      }
+    }
+    else if (req.user.is_admin === 1) {
+      res.status(500).send('작업자로 로그인하세요.');
+    }
+    else {
+      res.redirect('/default')
+    }
+  }
+  else {
+    res.redirect('/login');
+  }
+})
+
+//추후 공통모듈화 예정
+router.post('/trackingNumber-multi', (req, res) => {
+  const workbenchId = req.body.workbenchId;
+  const orderId = req.body.orderId;
+  const rebinrackId = req.body.rebinrackId;
+
+  // 랜덤 알파벳 생성 함수
+  function generateRandomAlphaNumeric(length) {
+      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      let result = '';
+      for (let i = 0; i < length; i++) {
+          const randomIndex = Math.floor(Math.random() * characters.length);
+          result += characters.charAt(randomIndex);
+      }
+      return result;
+  }
+
+  // 중복을 방지하고 랜덤 알파벳 생성
+  function generateUniqueTrackingNumber() {
+      const trackingNumber = generateRandomAlphaNumeric(10); // 10자리 랜덤 알파벳 및 숫자 조합
+
+      // 데이터베이스에서 중복 확인
+      const checkQuery = 'SELECT * FROM tracking_number WHERE id = ?';
+      db.query(checkQuery, [trackingNumber], (err, results) => {
+          if (err) {
+              console.error('중복 확인 오류: ' + err.message);
+              res.json({ success: false, message: '데이터 체크 실패' });
+          } else {
+              if (results.length === 0) {
+                  // 중복이 없으면 삽입
+                  const insertQuery = 'INSERT INTO tracking_number(id) VALUES (?)';
+                  const insertQuery2 = 'INSERT INTO tracking_orders(tracking_number_id, order_id) VALUES (?, ?)';
+                  db.query(insertQuery, [trackingNumber], (err, results2) => {
+                      if (err) {
+                          console.error('데이터 추가 오류: ' + err.message);
+                          res.json({ success: false, message: '데이터 추가 실패' });
+                      } else {
+                          db.query(insertQuery2, [trackingNumber, orderId], (err, results3) => {
+                              if (err) {
+                                  console.error('데이터 추가 오류: ' + err.message);
+                                  res.json({ success: false, message: '데이터 추가 실패' });
+                              } else {
+                                  res.redirect(`/work/multiPacking4?workbenchId=${workbenchId}&trackingNumber=${trackingNumber}&rebinrackId=${rebinrackId}`);
+                              }
+                          });
+                      }
+                  });
+              } else {
+                  // 중복이 있으면 다시 생성 시도
+                  generateUniqueTrackingNumber();
+              }
+          }
+      });
+  }
+
+  // 최초 실행
+  generateUniqueTrackingNumber();
+});
+
+
+router.get('/multiPacking4', (req, res) => {
+
+  if (req.user) {
+    if (req.user.is_admin === 0) {
+      if (req.user.work_access == '포장' || req.user.work_access === 'ALL') {
+        const workbenchId = req.query.workbenchId;
+        const rebinrackId = req.query.rebinrackId;
+        const trackingNumber = req.query.trackingNumber;
+        const query = `
+        SELECT 
+        o.id AS orderId,
+        o.shipping_address,
+        p.id AS productId,
+        p.image,
+        p.name,
+        od.quantity
+        FROM rebinrack_detail rd
+        INNER JOIN order_detail od ON rd.orderdetail_id = od.orderdetail_id
+        INNER JOIN product p ON od.product_id = p.id
+        INNER JOIN orders o ON od.order_id = o.id
+        WHERE rebinrack_id = ?
+        `
+        db.query(query, [rebinrackId],(err, results)=>{
+          if(err){
+            console.log(err);
+            res.json({success:false, message: '리빈선반 로드 실패'});
+          }
+          else{
+            console.log(results);
+            res.render('work_multiPacking4.ejs', { user: req.user, workbenchId: workbenchId, rebinrackId: rebinrackId, trackingNumber: trackingNumber, results: results});
+
+          }
+        })
+      }
+      else {
+        res.status(500).send('작업 권한이 없습니다.');
+      }
+    }
+    else if (req.user.is_admin === 1) {
+      res.status(500).send('작업자로 로그인하세요.');
+    }
+    else {
+      res.redirect('/default')
+    }
+  }
+  else {
+    res.redirect('/login');
+  }
+})
+
+router.post('/generatePDF-multi', (req, res) => {
+  console.log(req.body)
+  const doc = new pdfDocument();
+  doc.font("./public/assets/font/malgun.ttf");
+
+  res.setHeader('Content-Type', 'application/pdf');
+  res.setHeader('Content-Disposition', 'inline; filename=invoice.pdf');
+
+  doc.pipe(res);
+
+  doc.fontSize(20).text('운송장', { align: 'center' });
+  doc.moveDown();
+  doc.fontSize(12).text(`운송장 번호 : ${req.body.trackingNumber}`);
+  doc.text(`상품명 : ${req.body.productName} ...등`);
+  doc.fontSize(12).text(`주문번호 : ${req.body.orderId}`);
+
+  doc.fontSize(12).text(`FROM: 물류센터`);
+  doc.fontSize(12).text(`TO: ${req.body.address}`);
+
+  doc.moveDown();
+  doc.text('집하 날짜: ' + new Date().toLocaleDateString());
+  doc.moveDown();
+
+  doc.end(() => {
+      res.end();
+  });
+});
+
+
+router.post('/finish-packing-multi', (req, res) => {
+  const orderId = req.body.orderId;
+  const rebinrackId = req.body.rebinrackId;
+  const workbenchId = req.body.workbenchId;
+
+  // Start a transaction
+  db.beginTransaction((err) => {
+      if (err) {
+          console.error('트랜잭션 시작 오류: ' + err.message);
+          res.json({ success: false, message: '트랜잭션 시작 실패' });
+          return;
+      }
+
+      const query = 'UPDATE order_detail SET packing_flag = 1, packing_worker_id = ? WHERE order_id = ?';
+      const query2 = 'DELETE FROM rebinrack_detail WHERE rebinrack_id = ?';
+      const query3 = 'UPDATE rebin_rack SET finish_flag = 0 WHERE id = ?';
+
+      db.query(query, [req.user.login_id, orderId], (err, results) => {
+          if (err) {
+              return db.rollback(() => {
+                  console.error('데이터 수정 오류: ' + err.message);
+                  res.json({ success: false, message: '데이터 수정 실패' });
+              });
+          }
+
+          db.query(query2, [rebinrackId], (err2, results2) => {
+              if (err2) {
+                  return db.rollback(() => {
+                      console.error('데이터 삭제 오류: ' + err2.message);
+                      res.json({ success: false, message: '데이터 삭제 실패' });
+                  });
+              }
+
+              db.query(query3, [rebinrackId], (err3, results3)=>{
+                if(err3){
+                  return db.rollback(()=>{
+                    console.error('데이터 업데이트 오류: ' + err3.message);
+                    res.json({success:false, message: '데이터 업데이트 실패'});
+                  })
+                }
+                db.commit((err3) => {
+                  if (err3) {
+                      return db.rollback(() => {
+                          console.error('트랜잭션 커밋 오류: ' + err3.message);
+                          res.json({ success: false, message: '트랜잭션 커밋 실패' });
+                      });
+                  }
+
+                  res.redirect(`/work/multiPacking2?workbenchId=${workbenchId}`);
+                });
+              })
+
+              
+          });
+      });
+  });
+});
 
 module.exports = router;

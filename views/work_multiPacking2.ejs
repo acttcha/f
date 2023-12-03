@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>작업자 페이지 - 포장작업</title>
+    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
+    <link href="../css/main.css" rel="stylesheet" />
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+</head>
+
+<body class="sb-nav-fixed">
+    <%- include('topnav_work.ejs')%>
+        <div id="layoutSidenav">
+            <%- include('sidenav_work.ejs')%>
+                <div id="layoutSidenav_content">
+                    <main>
+                        <div class="container-fluid px-4">
+                            <h1 class="mt-4">포장 작업(다중)</h1>
+                            <ol class="breadcrumb mb-4">
+                                <li class="breadcrumb-item active">Multi Packing</li>
+                            </ol>
+
+                            <div class="container">
+                                <div class="sidebar">
+                                    <h1>1. 완료된 리빈 셀을 선택해주세요.</h1>
+
+                                </div>
+                                <div class="main-content">
+                                    <div class="mb-3 row" id="buttonContainer">
+                                        <% 
+                                
+                                        results.forEach(result => { %>
+                                            <div class="col-md-4 col-6 mb-3">
+                                                <button class="btn btn-secondary w-100" type="button" onclick="sendData('<%= result.id %>')"><%= result.id %></button>
+                                            </div>
+                                        <% }); %>
+                                    </div>
+                                </div>
+                                
+                                <div class="footer d-flex justify-content-between align-items-center">
+                                    <p class="m-0">현재 작업대 번호 : <%= workbenchId %></p>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </main>
+                    <%- include('footer.ejs')%>
+                </div>
+                <input type="hidden" id="workbenchId" value="<%= workbenchId %>">
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+            crossorigin="anonymous"></script>
+        <script src="../js/scripts.js"></script>
+        <script>
+            function sendData(rebinrackId) {
+                const workbenchId = document.getElementById("workbenchId").value
+                window.location.href = "/work/multiPacking3?rebinrackId=" + rebinrackId + "&workbenchId=" + workbenchId;
+            }
+        </script>
+          
+</body>
+
+</html>
