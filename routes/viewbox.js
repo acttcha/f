@@ -54,7 +54,7 @@ router.get('/viewbox2', (req, res) => {
                     res.status(500).send('서버 오류');
                   } else {
                     console.log(results)
-                    res.render('work_viewbox2.ejs', { box_contents: results, user: req.user });
+                    res.render('work_viewbox2.ejs', { box_contents: results, user: req.user, boxId: boxId });
                   }
             });
       }

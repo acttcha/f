@@ -120,7 +120,7 @@ router.get('/singlePacking2', (req, res) => {
                         res.render('work_singlePacking2.ejs', { user: req.user, boxId: boxId, joinResult: results });
                     } else {
                       console.log(results[0]);
-                        res.send('포장할 상품이 없습니다.');
+                        res.redirect('/work/singlePacking1');
                     }
                 }
             });
@@ -221,7 +221,7 @@ router.get('/singlePacking3', (req, res) => {
               p.image,
               od.picking_flag,
               od.packing_flag,
-              o.packing_method
+              o.packing_type
             FROM 
               orders o
             JOIN 
@@ -244,7 +244,7 @@ router.get('/singlePacking3', (req, res) => {
                         
                         res.render('work_singlePacking3.ejs', { user: req.user, boxId: boxId, joinResult: results, trackingNumber: trackingNumber});
                     } else {
-                        res.send('포장할 상품이 없습니다.');
+                        res.redirect('/work/singlePacking1')
                     }
                 }
             });
