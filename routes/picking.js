@@ -29,6 +29,7 @@ router.get('/boxcheck/:id', (req, res) => {
     const { id } = req.params;
 
     const query = 'SELECT * FROM box WHERE box_id = ?';
+    const query2 = 'SELECT * FROM order_detail WHERE picking_flag = 0 AND packing_type = ?'
 
     db.query(query, [id], (err, results) => {
         if (err) {
@@ -37,7 +38,19 @@ router.get('/boxcheck/:id', (req, res) => {
         } else {
             if (results.length > 0) {
                 if (results[0].availability == 1 && results[0].deadline_status == 0) {
-                    res.json({ success: true, message: '사용 가능한 토트 확인' });
+                    db.query(query2, [req.user.picking_access], (err2, results2) =>{
+                        if(err2){
+                            res.json({ success: false, message: '쿼리 에러2' });
+                        }
+                        else{
+                            if(results2.length > 0){
+                                res.json({ success: true, message: '사용 가능한 토트 및 처리할 주문 확인' });
+                            }
+                            else{
+                                res.json({ success: false, message: '현재 처리할 주문이 없습니다.' });
+                            }
+                        }
+                    })
                 } else if (results[0].availability == 0) {
                     res.json({ success: false, message: '토트가 이미 사용 중입니다.' });
                 } else if (results[0].deadline_status == 1) {
@@ -229,7 +242,7 @@ function performBoxFinish(boxId, res) {
                     }
                 });
             } else {
-                res.json({ success: false, message: '처리할 주문이 없습니다.' }); // 실제 message: 마감하려면 1개 이상의 주문이 적재되어야 합니다. 유저 고려 변경
+                res.json({ success: false, message: '마감하려면 1개 이상의 주문이 적재되어야 합니다.' });
             }
         }
     });
